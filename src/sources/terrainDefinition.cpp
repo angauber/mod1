@@ -1,18 +1,18 @@
-#include "landDefinition.hpp"
+#include "terrainDefinition.hpp"
 
-void	LandDefinition::debug() const
+void	TerrainDefinition::debug() const
 {
 	for (const auto &point : this->points) {
 		Debug{} << point;
 	}
 }
 
-void	LandDefinition::addPoint(Vector3 vector)
+void	TerrainDefinition::addPoint(Vector3 vector)
 {
 	this->points.push_back(vector);
 }
 
-void	LandDefinition::computeEdges()
+void	TerrainDefinition::computeEdges()
 {
 	int padding = 2000;
 
@@ -31,7 +31,7 @@ void	LandDefinition::computeEdges()
 	this->computeMinMax();
 }
 
-void	LandDefinition::computeMinMax()
+void	TerrainDefinition::computeMinMax()
 {
 	std::function<bool (const Vector3 &, const Vector3 &)> xCompare = [] (const Vector3 &lhs, const Vector3 &rhs) {
 		return lhs.x() < rhs.x();
@@ -53,7 +53,7 @@ void	LandDefinition::computeMinMax()
 	this->maxZ = std::max_element(this->points.begin(), this->points.end(), zCompare)->z();
 }
 
-void	LandDefinition::normalize()
+void	TerrainDefinition::normalize()
 {
 	float len {1.0f / this->points.size()};
 	Vector3 min {this->minX, this->minY, this->minZ};
@@ -93,7 +93,7 @@ void	LandDefinition::normalize()
 /**
  *  use IDW to interpolate coordinates
  */
-float	LandDefinition::interpolate(float x, float y, const float power) const
+float	TerrainDefinition::interpolate(float x, float y, const float power) const
 {
 	float a {0.0f};
 	float b {0.0f};
@@ -115,7 +115,7 @@ float	LandDefinition::interpolate(float x, float y, const float power) const
 	return b == 0.0f ? 0.0f : a / b;
 }
 
-void	LandDefinition::computeMesh()
+void	TerrainDefinition::computeMesh()
 {
 	GL::Buffer buffer;
 	float power {2.0};

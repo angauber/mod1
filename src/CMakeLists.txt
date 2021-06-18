@@ -10,7 +10,7 @@ set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -g3")
 
 add_executable(mod1 sources/mod1.cpp
-					sources/landDefinition.cpp
+					sources/terrainDefinition.cpp
 )
 
 target_link_libraries(mod1 PRIVATE

@@ -1,5 +1,5 @@
-#ifndef _LAND_DEFINITION_HPP_
-#define _LAND_DEFINITION_HPP_
+#ifndef _TERRAIN_DEFINITION_HPP_
+#define _TERRAIN_DEFINITION_HPP_
 
 #include <vector>
 #include <algorithm>
@@ -20,7 +20,7 @@ struct Vertex {
 	Color4 color;
 };
 
-class LandDefinition {
+class TerrainDefinition {
 	public:
 		void	 	debug() const;
 		void	 	addPoint(Vector3);

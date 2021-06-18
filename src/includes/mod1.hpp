@@ -7,10 +7,8 @@
 #include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/Math/Matrix4.h>
 #include <Magnum/Platform/Sdl2Application.h>
-//#include <Magnum/Shaders/VertexColorGL.h>
-//#include <Magnum/Trade/MeshData.h>
 
-#include "landDefinition.hpp"
+#include "terrainDefinition.hpp"
 
 using namespace Magnum;
 
@@ -23,7 +21,7 @@ class Mod1: public Platform::Application {
         void	mouseMoveEvent(MouseMoveEvent& event) override;
 		void	mouseScrollEvent(MouseScrollEvent &event) override;
 		
-		LandDefinition 				land;
+		TerrainDefinition 			terrain;
 		Shaders::VertexColorGL3D	shader;
 		// Render matrices
 		Matrix4 					translationMatrix;

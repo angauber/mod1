@@ -14,13 +14,13 @@ Mod1::Mod1(const Arguments& arguments): Platform::Application{arguments}
 	this->projectionMatrix = Matrix4::perspectiveProjection(Deg{35.0f}, 1.0f, 0.0001f, 100.0f);
 
 
-	this->land.addPoint(Vector3 {10000,10000,6000});
-//	this->land.addPoint(Vector3 {15000,10000,100});
-	this->land.addPoint(Vector3 {15000,15000,4000});
+	this->terrain.addPoint(Vector3 {10000,10000,6000});
+//	this->terrain.addPoint(Vector3 {15000,10000,100});
+	this->terrain.addPoint(Vector3 {15000,15000,4000});
 
-	this->land.computeEdges();
-	this->land.normalize();
-	this->land.computeMesh();
+	this->terrain.computeEdges();
+	this->terrain.normalize();
+	this->terrain.computeMesh();
 }
 
 void Mod1::mouseScrollEvent(MouseScrollEvent &event)
@@ -57,7 +57,7 @@ void	Mod1::drawEvent()
 	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
 
 	this->shader.setTransformationProjectionMatrix(projectionMatrix * this->translationMatrix * this->rotationMatrix)
-        .draw(this->land.mesh);
+        .draw(this->terrain.mesh);
 
 	this->swapBuffers();
 }
