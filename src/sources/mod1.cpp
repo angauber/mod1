@@ -19,7 +19,7 @@ Mod1::Mod1(const Arguments& arguments): Platform::Application{arguments}
 	this->terrain.addPoint(Vector3 {15000,15000,4000});
 
 	this->terrain.computeEdges();
-	this->terrain.normalize();
+	this->terrain.scale();
 	this->terrain.computeMesh();
 }
 

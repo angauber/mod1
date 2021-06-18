@@ -91,6 +91,29 @@ void	TerrainDefinition::normalize()
 }
 
 /**
+ * Scale all the points down to fit in a (0; 1) box
+ * Might need fixing on negative coords (x and y)
+ */
+void	TerrainDefinition::scale()
+{
+	for (auto &point : this->points) {
+		point -= Vector3{this->minX, this->minY, 0};
+	}
+
+	this->computeMinMax();
+
+	float norm = std::max(this->maxX, this->maxY);
+
+	Vector3 size {};
+
+	for (auto &point : this->points) {
+		point /= norm;
+	}
+
+	this->computeMinMax();
+}
+
+/**
  *  use IDW to interpolate coordinates
  */
 float	TerrainDefinition::interpolate(float x, float y, const float power) const

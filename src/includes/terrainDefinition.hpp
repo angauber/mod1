@@ -26,6 +26,7 @@ class TerrainDefinition {
 		void	 	addPoint(Vector3);
 		void 		computeEdges();
 		void		normalize();
+		void		scale();
 		float		interpolate(float x, float y, float power) const;
 		void		computeMesh();
 		GL::Mesh				mesh;
