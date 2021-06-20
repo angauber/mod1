@@ -10,14 +10,18 @@
 #include <Magnum/GL/Buffer.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Math/Color.h>
+#include <Magnum/Shaders/PhongGL.h>
+#include <Magnum/MeshTools/GenerateNormals.h>
+#include <Corrade/Containers/Array.h>
+#include <Corrade/Containers/ArrayView.h>
 #include <Corrade/Containers/ArrayViewStl.h>
-#include <Magnum/Shaders/VertexColorGL.h>
+#include <Corrade/Containers/StridedArrayView.h>
 
 using namespace Magnum;
 
 struct Vertex {
 	Vector3 position;
-	Color4 color;
+	Vector3 normal;
 };
 
 class TerrainDefinition {
@@ -25,11 +29,9 @@ class TerrainDefinition {
 		void	 	debug() const;
 		void	 	addPoint(Vector3);
 		void 		computeEdges();
-		void		normalize();
 		void		scale();
 		float		interpolate(float x, float y, float power) const;
-		void		computeMesh();
-		GL::Mesh				mesh;
+		GL::Mesh	computeMesh();
 	private:
 		std::vector<Vector3>	points;
 		float					minX {0};

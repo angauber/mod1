@@ -53,43 +53,6 @@ void	TerrainDefinition::computeMinMax()
 	this->maxZ = std::max_element(this->points.begin(), this->points.end(), zCompare)->z();
 }
 
-void	TerrainDefinition::normalize()
-{
-	float len {1.0f / this->points.size()};
-	Vector3 min {this->minX, this->minY, this->minZ};
-	Vector3 max {this->maxX, this->maxY, this->maxZ};
-	Vector3 delta {max - min};
-
-	/*
-	// Bring back x and y to their origin (0; 0)
-	for (auto &point : this->points) {
-		point -= Vector3{this->minX, this->minY, 0};
-	}
-	*/
-
-	/**
-	 *  Avoiding division by zero
-	 */
-	if (delta.x() == 0) {
-		delta += Vector3::xAxis(len);
-	}
-	if (delta.y() == 0) {
-		delta += Vector3::yAxis(len);
-	}
-	if (delta.z() == 0) {
-		delta += Vector3::zAxis(len);
-	}
-
-	/**
-	 * Normalizing
-	 */
-	for (auto &point : this->points) {
-		point = (point - min) / delta;
-	}
-
-	this->computeMinMax();
-}
-
 /**
  * Scale all the points down to fit in a (0; 1) box
  * Might need fixing on negative coords (x and y)
@@ -138,55 +101,75 @@ float	TerrainDefinition::interpolate(float x, float y, const float power) const
 	return b == 0.0f ? 0.0f : a / b;
 }
 
-void	TerrainDefinition::computeMesh()
+GL::Mesh	TerrainDefinition::computeMesh()
 {
-	GL::Buffer buffer;
+	GL::Mesh mesh;	
+	GL::Buffer verticesBuffer;
+	GL::Buffer indexBuffer;
 	float power {2.0};
 	float precision {0.01f};
-	float z0 {0.0f};
-	float z1 {0.0f};
-	float z2 {0.0f};
-	float z3 {0.0f};
-	Color4 color (66.0f / 255, 135.0f / 255, 245.0f / 255, 1.0f);
+	float x {0.0f};
+	float y {0.0f};
+	float z {0.0f};
+	int cols {static_cast<int> ((this->maxX - this->minX) / precision)};
+	int rows {static_cast<int> ((this->maxY - this->minY) / precision)};
+	std::vector<Vector3> positions;
+	std::vector<UnsignedShort> indices;
 	std::vector<Vertex> vertices;
 
-	for (float x = this->minX; x < this->maxX - precision; x += precision) { 
-		for (float y = this->minY; y < this->maxY - precision; y += precision) {
+	for (int i = 0; i < cols; i++) { 
+		for (int j = 0; j < rows; j++) {
+			x = this->minX + i * precision;
+			y = this->minY + j * precision;
+			z = this->interpolate(x, y, power);
+
+			positions.push_back(Vector3 {x, static_cast<Float> (z), y});
+
 			// Building two triangles, vertex need to be ordered in trigonometric direction
-			
-			z0 = this->interpolate(x, y, power);
-			z1 = this->interpolate(x + precision, y, power);
-			z2 = this->interpolate(x, y + precision, power);
-			z3 = this->interpolate(x + precision, y + precision, power);
+			if (i < cols - 1 && j < rows - 1) {
+				// Upper triangle
+				indices.push_back(positions.size() - 1);
+				indices.push_back(positions.size());
+				indices.push_back(positions.size() - 1 + rows);
+			}
 
-			// Upper triangle
-			vertices.push_back(Vertex {{x, static_cast<Float> (z0), y}, color});
-			vertices.push_back(Vertex {{x, static_cast<Float> (z2), y + precision}, color});
-			vertices.push_back(Vertex {{x + precision, static_cast<Float> (z1), y}, color});
-
-			// lower triangle
-			vertices.push_back(Vertex {{x + precision, static_cast<Float> (z1), y}, color});
-			vertices.push_back(Vertex {{x, static_cast<Float> (z2), y + precision}, color});
-			vertices.push_back(Vertex {{x + precision, static_cast<Float> (z3), y + precision}, color});
+			if (i < cols - 2 && j < rows - 2) {
+				// lower triangle
+				indices.push_back(positions.size() - 1 + rows);
+				indices.push_back(positions.size());
+				indices.push_back(positions.size() + rows);
+			}
 		}
 	}
 
 	// Transform from normalized to -1 +1
-	for (Vertex &vertex : vertices) {
-		vertex.position *= 2;
-		vertex.position -= Vector3(1.0f, 1.0f, 1.0f);
+	for (size_t i = 0; i < positions.size(); i++) {
+		positions[i] = (positions[i] * Vector3(2.0f)) - Vector3(1.0f);
 	}
-    
-	buffer.setData(vertices, GL::BufferUsage::StaticDraw);
+
+	// Compute normals for lighting
+	Containers::Array<Vector3> normals = MeshTools::generateSmoothNormals(indices, positions);
+
+	// Build vertices
+	for (size_t i = 0; i < positions.size(); i++) {
+		vertices.push_back(Vertex {positions[i], normals[i]});
+	}
+
+	// Filling buffers
+	verticesBuffer.setData(vertices, GL::BufferUsage::StaticDraw);
+	indexBuffer.setData(indices);
 
 	Debug{} << "Vertices:" << vertices.size();
-	Debug{} << "Triangles:" << vertices.size() / 3;
+	Debug{} << "Triangles:" << indices.size() / 3;
 
-	this->mesh.setPrimitive(GL::MeshPrimitive::Triangles)
-		.setCount(vertices.size())
-		.addVertexBuffer(buffer,
+	// Creating mesh
+	mesh.setPrimitive(GL::MeshPrimitive::Triangles)
+		.setCount(indices.size())
+		.addVertexBuffer(verticesBuffer,
 			0,
-			Shaders::VertexColorGL3D::Position{},
-			Shaders::VertexColorGL3D::Color4{}
-		);
+			Shaders::PhongGL::Position{},
+			Shaders::PhongGL::Normal{}
+		).setIndexBuffer(indexBuffer, 0, GL::MeshIndexType::UnsignedShort, 0, vertices.size() - 1);
+
+	return mesh;
 }

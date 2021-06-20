@@ -22,10 +22,12 @@ class Mod1: public Platform::Application {
 		void	mouseScrollEvent(MouseScrollEvent &event) override;
 		
 		TerrainDefinition 			terrain;
-		Shaders::VertexColorGL3D	shader;
+		Shaders::PhongGL			shader;
+		GL::Mesh					mesh;
 		// Render matrices
 		Matrix4 					translationMatrix;
 		Matrix4 					rotationMatrix;
+		Matrix4 					transformationMatrix;
 		Matrix4 					projectionMatrix;
 
 };
