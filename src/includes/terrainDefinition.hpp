@@ -17,6 +17,8 @@
 #include <Corrade/Containers/ArrayViewStl.h>
 #include <Corrade/Containers/StridedArrayView.h>
 
+#include "mod1Parser.hpp"
+
 using namespace Magnum;
 
 struct Vertex {
@@ -24,10 +26,11 @@ struct Vertex {
 	Vector3 normal;
 };
 
-class TerrainDefinition {
+class TerrainDefinition : public Mod1Parser {
 	public:
-		void	 	debug() const;
-		void	 	addPoint(Vector3);
+		void	 	debugTerrain() const;
+		void	 	addPoint(Vector3) override;
+		size_t		getPointCount() const override;
 		void 		computeEdges();
 		void		scale();
 		float		interpolate(float x, float y, float power) const;

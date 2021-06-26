@@ -1,6 +1,6 @@
 #include "terrainDefinition.hpp"
 
-void	TerrainDefinition::debug() const
+void	TerrainDefinition::debugTerrain() const
 {
 	for (const auto &point : this->points) {
 		Debug{} << point;
@@ -12,9 +12,14 @@ void	TerrainDefinition::addPoint(Vector3 vector)
 	this->points.push_back(vector);
 }
 
+size_t	TerrainDefinition::getPointCount() const
+{
+	return this->points.size();
+}
+
 void	TerrainDefinition::computeEdges()
 {
-	int padding = 2000;
+	int padding = 5000;
 
 	this->computeMinMax();
 

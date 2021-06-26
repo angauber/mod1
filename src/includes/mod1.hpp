@@ -12,15 +12,18 @@
 
 using namespace Magnum;
 
-class Mod1: public Platform::Application {
+class Mod1: public Platform::Application, public TerrainDefinition
+{
     public:
         explicit Mod1(const Arguments& arguments);
 
     private:
-        void	drawEvent() override;
-        void	mouseMoveEvent(MouseMoveEvent& event) override;
+		void	setupRendering();
+        void	keyReleaseEvent(KeyEvent &event) override;
+        void	mouseMoveEvent(MouseMoveEvent &event) override;
 		void	mouseScrollEvent(MouseScrollEvent &event) override;
-		
+        void	drawEvent() override;
+
 		TerrainDefinition 			terrain;
 		Shaders::PhongGL			shader;
 		GL::Mesh					mesh;

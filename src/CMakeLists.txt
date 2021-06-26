@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -g3")
 
 add_executable(mod1 sources/mod1.cpp
 					sources/terrainDefinition.cpp
+					sources/mod1Parser.cpp
 )
 
 target_link_libraries(mod1 PRIVATE

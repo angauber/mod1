@@ -1,0 +1,8 @@
+https://mikeash.com/pyblog/fluid-simulation-for-dummies.html
+
+
+poddible simulations:
+SPH
+PIC/FLIP
+
+Euler integration Gravity: vn+1=vn+g·dt

@@ -2,31 +2,35 @@
 
 Mod1::Mod1(const Arguments& arguments): Platform::Application{arguments}
 {
-	Color4 backgroundColor (50.0 / 255, 50.0 / 255, 50.0 / 255, 1);
+	if (arguments.argc != 2) {
+		Error{} << "Missing mod1 file";
+		this->exit(1);
+	} else if (this->parseFile(arguments.argv[1]) == false) {
+		Error{} << "No points have been parsed correctly";
+		this->exit(1);
+	} else {
+		this->computeEdges();
+		this->scale();
 
-	/**
-	 * Disbaled to be able to see  the mesh
-	 */
-//	GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
-	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
+		this->mesh = this->computeMesh();
 
-	GL::Renderer::setClearColor(backgroundColor);
-
-	// X is horizontal position, Y the elevation and Z the depth
-	this->translationMatrix = Matrix4::translation(Vector3 {0.0f, 0.0f, -5.0f});
-	this->projectionMatrix = Matrix4::perspectiveProjection(Deg{35.0f}, 1.0f, 0.0001f, 100.0f);
-
-
-	this->terrain.addPoint(Vector3 {10000,10000,6000});
-	this->terrain.addPoint(Vector3 {15000,10000,100});
-	this->terrain.addPoint(Vector3 {15000,15000,4000});
-
-	this->terrain.computeEdges();
-	this->terrain.scale();
-	this->mesh = this->terrain.computeMesh();
+		this->setupRendering();
+	}
 }
 
-void Mod1::mouseScrollEvent(MouseScrollEvent &event)
+void	Mod1::setupRendering()
+{
+	Color3 backgroundColor (50.0 / 255, 50.0 / 255, 50.0 / 255);
+
+	// X is horizontal position, Y the elevation and Z the depth
+	this->translationMatrix = Matrix4::translation(Vector3 {0.0f, 0.0f, -6.0f});
+	this->projectionMatrix = Matrix4::perspectiveProjection(Deg{35.0f}, 1.0f, 0.0001f, 100.0f);
+
+	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
+	GL::Renderer::setClearColor(backgroundColor);
+}
+
+void	Mod1::mouseScrollEvent(MouseScrollEvent &event)
 {
 	float delta {event.offset().y()};
 	Vector3 translation {0.0f, 0.0f, delta};
@@ -38,7 +42,15 @@ void Mod1::mouseScrollEvent(MouseScrollEvent &event)
     this->redraw();
 }
 
-void Mod1::mouseMoveEvent(MouseMoveEvent &event)
+void	Mod1::keyReleaseEvent(KeyEvent &event)
+{
+	if (event.key() == KeyEvent::Key::Esc) {
+		event.setAccepted();
+		this->exit();
+	}
+}
+
+void	Mod1::mouseMoveEvent(MouseMoveEvent &event)
 {
     if (!(event.buttons() & MouseMoveEvent::Button::Left)) {
 		return;
@@ -60,15 +72,15 @@ void Mod1::mouseMoveEvent(MouseMoveEvent &event)
 void	Mod1::drawEvent()
 {
 	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
-
-	Color4 color (66.0f / 255, 135.0f / 255, 245.0f / 255, 1.0f);
+	Color3 color (234.0f / 255, 255.0f / 255, 0.0f / 255);
 
 	this->shader.setDiffuseColor(color)
-		.setShininess(100.0f)
+		.setShininess(200.0f)
     	.setTransformationMatrix(this->transformationMatrix)
 		.setNormalMatrix(this->transformationMatrix.normalMatrix())
 		.setProjectionMatrix(this->projectionMatrix)
 		.draw(this->mesh);
 
 	this->swapBuffers();
+	this->redraw();
 }
