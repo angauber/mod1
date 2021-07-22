@@ -39,7 +39,6 @@ void	Mod1::mouseScrollEvent(MouseScrollEvent &event)
 	this->transformationMatrix = this->translationMatrix * this->rotationMatrix;
 
     event.setAccepted();
-    this->redraw();
 }
 
 void	Mod1::keyReleaseEvent(KeyEvent &event)
@@ -66,7 +65,6 @@ void	Mod1::mouseMoveEvent(MouseMoveEvent &event)
 	this->transformationMatrix = this->translationMatrix * this->rotationMatrix;
 
     event.setAccepted();
-    this->redraw();
 }
 
 void	Mod1::drawEvent()

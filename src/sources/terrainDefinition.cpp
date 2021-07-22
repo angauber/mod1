@@ -170,11 +170,11 @@ GL::Mesh	TerrainDefinition::computeMesh()
 	// Creating mesh
 	mesh.setPrimitive(GL::MeshPrimitive::Triangles)
 		.setCount(indices.size())
-		.addVertexBuffer(verticesBuffer,
+		.addVertexBuffer(std::move(verticesBuffer),
 			0,
 			Shaders::PhongGL::Position{},
 			Shaders::PhongGL::Normal{}
-		).setIndexBuffer(indexBuffer, 0, GL::MeshIndexType::UnsignedShort, 0, vertices.size() - 1);
+		).setIndexBuffer(std::move(indexBuffer), 0, GL::MeshIndexType::UnsignedShort, 0, vertices.size() - 1);
 
 	return mesh;
 }
