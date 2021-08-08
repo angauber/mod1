@@ -7,6 +7,12 @@ void	TerrainDefinition::debugTerrain() const
 	}
 }
 
+void	TerrainDefinition::handleTerrain()
+{
+	this->computeEdges();
+	this->scale();
+}
+
 void	TerrainDefinition::addPoint(Vector3 vector)
 {
 	this->points.push_back(vector);
@@ -84,8 +90,9 @@ void	TerrainDefinition::scale()
 /**
  *  use IDW to interpolate coordinates
  */
-float	TerrainDefinition::interpolate(float x, float y, const float power) const
+float	TerrainDefinition::interpolateTerrain(float x, float y) const
 {
+	float power {2.0};
 	float a {0.0f};
 	float b {0.0f};
 	float distance;
@@ -104,77 +111,4 @@ float	TerrainDefinition::interpolate(float x, float y, const float power) const
 	}
 
 	return b == 0.0f ? 0.0f : a / b;
-}
-
-GL::Mesh	TerrainDefinition::computeMesh()
-{
-	GL::Mesh mesh;	
-	GL::Buffer verticesBuffer;
-	GL::Buffer indexBuffer;
-	float power {2.0};
-	float precision {0.01f};
-	float x {0.0f};
-	float y {0.0f};
-	float z {0.0f};
-	int cols {static_cast<int> ((this->maxX - this->minX) / precision)};
-	int rows {static_cast<int> ((this->maxY - this->minY) / precision)};
-	std::vector<Vector3> positions;
-	std::vector<UnsignedShort> indices;
-	std::vector<Vertex> vertices;
-
-	for (int i = 0; i < cols; i++) { 
-		for (int j = 0; j < rows; j++) {
-			x = this->minX + i * precision;
-			y = this->minY + j * precision;
-			z = this->interpolate(x, y, power);
-
-			positions.push_back(Vector3 {x, static_cast<Float> (z), y});
-
-			// Building two triangles, vertex need to be ordered in trigonometric direction
-			if (i < cols - 1 && j < rows - 1) {
-				// Upper triangle
-				indices.push_back(positions.size() - 1);
-				indices.push_back(positions.size());
-				indices.push_back(positions.size() - 1 + rows);
-			}
-
-			if (i < cols - 2 && j < rows - 2) {
-				// lower triangle
-				indices.push_back(positions.size() - 1 + rows);
-				indices.push_back(positions.size());
-				indices.push_back(positions.size() + rows);
-			}
-		}
-	}
-
-	// Transform from normalized to -1 +1
-	for (size_t i = 0; i < positions.size(); i++) {
-		positions[i] = (positions[i] * Vector3(2.0f)) - Vector3(1.0f);
-	}
-
-	// Compute normals for lighting
-	Containers::Array<Vector3> normals = MeshTools::generateSmoothNormals(indices, positions);
-
-	// Build vertices
-	for (size_t i = 0; i < positions.size(); i++) {
-		vertices.push_back(Vertex {positions[i], normals[i]});
-	}
-
-	// Filling buffers
-	verticesBuffer.setData(vertices, GL::BufferUsage::StaticDraw);
-	indexBuffer.setData(indices);
-
-	Debug{} << "Vertices:" << vertices.size();
-	Debug{} << "Triangles:" << indices.size() / 3;
-
-	// Creating mesh
-	mesh.setPrimitive(GL::MeshPrimitive::Triangles)
-		.setCount(indices.size())
-		.addVertexBuffer(std::move(verticesBuffer),
-			0,
-			Shaders::PhongGL::Position{},
-			Shaders::PhongGL::Normal{}
-		).setIndexBuffer(std::move(indexBuffer), 0, GL::MeshIndexType::UnsignedShort, 0, vertices.size() - 1);
-
-	return mesh;
 }

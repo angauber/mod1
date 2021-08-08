@@ -4,37 +4,18 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
-#include <Magnum/Magnum.h>
-#include <Magnum/Math/Vector3.h>
-#include <Magnum/Math/Functions.h>
-#include <Magnum/GL/Buffer.h>
-#include <Magnum/GL/Mesh.h>
-#include <Magnum/Math/Color.h>
-#include <Magnum/Shaders/PhongGL.h>
-#include <Magnum/MeshTools/GenerateNormals.h>
-#include <Corrade/Containers/Array.h>
-#include <Corrade/Containers/ArrayView.h>
-#include <Corrade/Containers/ArrayViewStl.h>
-#include <Corrade/Containers/StridedArrayView.h>
 
 #include "mod1Parser.hpp"
 
 using namespace Magnum;
 
-struct Vertex {
-	Vector3 position;
-	Vector3 normal;
-};
-
 class TerrainDefinition : public Mod1Parser {
-	public:
+	protected:
+		const float		precision {0.01f};
+
+		void		handleTerrain();
 		void	 	debugTerrain() const;
-		void	 	addPoint(Vector3) override;
-		size_t		getPointCount() const override;
-		void 		computeEdges();
-		void		scale();
-		float		interpolate(float x, float y, float power) const;
-		GL::Mesh	computeMesh();
+		float		interpolateTerrain(float x, float y) const;
 	private:
 		std::vector<Vector3>	points;
 		float					minX {0};
@@ -44,7 +25,11 @@ class TerrainDefinition : public Mod1Parser {
 		float					minZ {0};
 		float					maxZ {0};
 
+		void	addPoint(Vector3) override;
+		size_t	getPointCount() const override;
 		void	computeMinMax();
+		void 	computeEdges();
+		void	scale();
 };
 
 #endif

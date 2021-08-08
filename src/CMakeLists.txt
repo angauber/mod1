@@ -7,16 +7,20 @@ find_package(Magnum REQUIRED
 
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -g3")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 
 add_executable(mod1 sources/mod1.cpp
-					sources/terrainDefinition.cpp
 					sources/mod1Parser.cpp
+					sources/terrainDefinition.cpp
+					sources/meshCreation.cpp
+					sources/waterSimulation.cpp
 )
 
 target_link_libraries(mod1 PRIVATE
     Magnum::Application
-    Magnum::GL
+	Magnum::GL
     Magnum::Magnum
     Magnum::Shaders
 	Magnum::Primitives
