@@ -137,12 +137,12 @@ void	Mod1::drawEvent()
 		.setNormalMatrix(this->transformationMatrix.normalMatrix())
 		.setProjectionMatrix(this->projectionMatrix);
 
-	this->updateTime += this->timeline.previousFrameDuration();
-	if (this->updateTime >= this->timeToUpdate) {
-//		this->updateSimulation(0.025);
-		this->updateSimulation(this->timeToUpdate);
-		this->updateTime = 0.0f;
-	}
+//	this->updateTime += this->timeline.previousFrameDuration();
+//	if (this->updateTime >= this->timeToUpdate) {
+		this->updateSimulation(this->timeline.previousFrameDuration());
+//		this->updateSimulation(this->timeToUpdate);
+//		this->updateTime = 0.0f;
+//	}
 
 	this->shader.draw(this->terrainMesh);
 	this->shader.setDiffuseColor(Color3 {33.0f / 255, 92.0f / 255, 255.0f / 255});
