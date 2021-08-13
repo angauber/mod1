@@ -21,20 +21,12 @@ void	WaterSimulation::handleTerrain()
 
 GL::Mesh	WaterSimulation::computeTerrainMesh()
 {
-	return this->createMesh(this->gridSize,
-							this->grid,
-							[] (Cell cell) -> float { return cell.terrainHeight; },
-							[] (Cell cell) -> bool { return true; }
-	);
+	return this->createTerrainMesh(this->gridSize, this->grid);
 }
 
 GL::Mesh	WaterSimulation::computeWaterMesh()
 {
-	return this->createMesh(this->gridSize,
-							this->grid,
-							[] (Cell cell) -> float { return cell.terrainHeight + cell.waterDepth; },
-							[] (Cell cell) -> bool { return cell.waterDepth > 0.00001f; }
-	);
+	return this->createWaterMesh(this->gridSize, this->grid);
 }
 
 void	WaterSimulation::updateSimulation(float timestep)
@@ -57,7 +49,7 @@ void	WaterSimulation::updatePipeFlows(float timestep)
 	}
 }
 
-float	WaterSimulation::updatePipeFlow(Cell &cell0, Cell &cell1, float pipeFlow, float timestep)
+float	WaterSimulation::updatePipeFlow(const Cell &cell0, const Cell &cell1, float pipeFlow, float timestep)
 {
 	float pipeCrossSection {this->cellSize};
 	float deltaSurface {0.0f};
@@ -118,17 +110,17 @@ void	WaterSimulation::updateWaterDepth(float timestep)
 
 }
 
-bool	WaterSimulation::isDry(Cell cell) const
+bool	WaterSimulation::isDry(const Cell &cell) const
 {
 	return cell.waterDepth == 0.0f;
 }
 
-float	WaterSimulation::waterHeight(Cell cell) const
+float	WaterSimulation::waterHeight(const Cell &cell) const
 {
 	return cell.terrainHeight + cell.waterDepth;
 }
 
-float	WaterSimulation::deltaSurface(Cell c0, Cell c1) const
+float	WaterSimulation::deltaSurface(const Cell &c0, const Cell &c1) const
 {
 	return this->waterHeight(c0) - this->waterHeight(c1);
 }

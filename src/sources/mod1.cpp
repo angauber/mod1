@@ -74,10 +74,8 @@ void	Mod1::mouseMoveEvent(MouseMoveEvent &event)
 void	Mod1::drawEvent()
 {
 	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
-	Color3 color (234.0f / 255, 255.0f / 255, 0.0f / 255);
 
 	this->shader
-		.setDiffuseColor(color)
 		.setShininess(200.0f)
 		.setTransformationMatrix(this->transformationMatrix)
 		.setNormalMatrix(this->transformationMatrix.normalMatrix())
@@ -86,7 +84,6 @@ void	Mod1::drawEvent()
 	this->updateSimulation(this->timeline.previousFrameDuration());
 
 	this->shader.draw(this->terrainMesh);
-	this->shader.setDiffuseColor(Color3 {33.0f / 255, 92.0f / 255, 255.0f / 255});
 	this->shader.draw(std::move(this->computeWaterMesh()));
 
 	this->swapBuffers();

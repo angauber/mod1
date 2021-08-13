@@ -27,11 +27,11 @@ class WaterSimulation : public TerrainDefinition, public MeshCreation
 		SimulationGrid	grid {this->gridSize, std::vector<Cell> (this->gridSize)};
 
 		void	updatePipeFlows(float timestep);
-		float	updatePipeFlow(Cell &cell0, Cell &cell1, float pipeFlow, float timestep);
+		float	updatePipeFlow(const Cell &cell0, const Cell &cell1, float pipeFlow, float timestep);
 		void	updateWaterDepth(float timestep);
-		bool	isDry(Cell cell) const;
-		float	waterHeight(Cell cell) const;
-		float	deltaSurface(Cell c0, Cell c1) const;
+		bool	isDry(const Cell &cell) const;
+		float	waterHeight(const Cell &cell) const;
+		float	deltaSurface(const Cell &c0, const Cell &c1) const;
 };
 
 #endif

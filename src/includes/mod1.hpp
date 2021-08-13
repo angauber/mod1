@@ -33,7 +33,7 @@ class Mod1 : public Platform::Application, public WaterSimulation
 		GL::Mesh					terrainMesh;
 		GL::Mesh					waterMesh;
 
-		Shaders::PhongGL			shader;
+		Shaders::PhongGL			shader {Shaders::PhongGL::Flag::VertexColor};
 
 		Matrix4 					translationMatrix;
 		Matrix4 					rotationMatrix;
