@@ -12,35 +12,9 @@ Mod1::Mod1(const Arguments& arguments): Platform::Application{arguments}
 		WaterSimulation::handleTerrain();
 
 		this->terrainMesh = this->computeTerrainMesh();
-//		this->terrainMesh = this->computeTerrainMesh();
 
-//		this->createWaterMeshes();
 		this->setupRendering();
 	}
-}
-
-void	Mod1::createWaterMeshes()
-{	
-	GL::Buffer indices;
-	GL::Buffer vertices;
-	Trade::MeshData cube = Primitives::cubeSolid();
-
-	std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(cube.indicesAsArray());
-
-	indices.setData(compressed.first);
-
-	auto positions = cube.positions3DAsArray();
-
-	for (auto &position : positions) {
-		position *= Vector3 {this->precision, 1.0f, this->precision};
-	}
-
-	vertices.setData(MeshTools::interleave(positions, cube.normalsAsArray()));
-
-	this->waterMesh.setPrimitive(cube.primitive())
-		.setCount(cube.indexCount())
-		.addVertexBuffer(std::move(vertices), 0, Shaders::PhongGL::Position{}, Shaders::PhongGL::Normal{})
-		.setIndexBuffer(std::move(indices), 0, compressed.second);
 }
 
 void	Mod1::setupRendering()
@@ -58,34 +32,6 @@ void	Mod1::setupRendering()
     GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 
 	GL::Renderer::setClearColor(backgroundColor);
-}
-
-/**
- * Moving the transformation matrix around and drawing multiple times the same mesh (water column)
- */
-void	Mod1::renderWater()
-{
-	SimulationGrid grid = this->getSimulationGrid();
-	Trade::MeshData cube = Primitives::cubeSolid();
-	Matrix4 transformation = this->transformationMatrix;
-
-	for (size_t i = 0; i < grid.size(); i++) {
-		for (size_t j = 0; j < grid.size(); j++) {
-			if (grid[i][j].waterDepth > 0.000001f) {
-				this->shader.setTransformationMatrix(
-					transformation *
-//					Matrix4::translation({((i * 0.01 * 2) - 1), -1, ((j * 0.01 * 2) - 1)})
-					Matrix4::translation({((i * 0.01 * 2) - 1.0f), grid[i][j].terrainHeight + grid[i][j].waterDepth - 1.0f, ((j * 0.01 * 2) - 1.0f)})
-					*
-					Matrix4::scaling({1.0f, 0.01f, 1.0f})
-				);
-
-				this->shader.draw(this->waterMesh);
-			}
-		}
-	}
-	
-	this->shader.setTransformationMatrix(transformation);
 }
 
 void	Mod1::mouseScrollEvent(MouseScrollEvent &event)
@@ -137,17 +83,11 @@ void	Mod1::drawEvent()
 		.setNormalMatrix(this->transformationMatrix.normalMatrix())
 		.setProjectionMatrix(this->projectionMatrix);
 
-//	this->updateTime += this->timeline.previousFrameDuration();
-//	if (this->updateTime >= this->timeToUpdate) {
-		this->updateSimulation(this->timeline.previousFrameDuration());
-//		this->updateSimulation(this->timeToUpdate);
-//		this->updateTime = 0.0f;
-//	}
+	this->updateSimulation(this->timeline.previousFrameDuration());
 
 	this->shader.draw(this->terrainMesh);
 	this->shader.setDiffuseColor(Color3 {33.0f / 255, 92.0f / 255, 255.0f / 255});
 	this->shader.draw(std::move(this->computeWaterMesh()));
-	//this->renderWater();
 
 	this->swapBuffers();
 	this->redraw();
