@@ -22,13 +22,13 @@ using namespace Magnum;
 struct TerrainVertex {
 	Vector3 position;
 	Vector3 normal;
-    Color3 color;
+    Color4 color;
 };
 
 struct WaterVertex {
 	Vector3 position;
 	Vector3 normal;
-	Color3 color;
+	Color4 color;
 };
 
 class MeshCreation
@@ -40,11 +40,11 @@ class MeshCreation
 	private:
 		std::vector<Vector3>		positions;
 		std::vector<UnsignedShort>	indices;
+		std::vector<Color4>			colors;
 		Containers::Array<Vector3>	normals;
 
-		void	fillPositionsIndicesAndNormals(int size, const SimulationGrid &grid, std::function<float(Cell)> height, std::function<bool(Cell)> shouldRender);
-		Color3	getTerrainColor(float height) const;
-		Color3	getWaterColor(float depth) const;
+		GL::Mesh	createMesh();
+		void		fillVectors(int size, const SimulationGrid &grid, std::function<float(Cell)> height, std::function<bool(Cell)> shouldRender, std::function<Color4(Cell)> getColor);
 };
 
 #endif

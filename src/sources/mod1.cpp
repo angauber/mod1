@@ -29,8 +29,10 @@ void	Mod1::setupRendering()
 	this->timeline.start();
 
 	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
-    GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
+    GL::Renderer::enable(GL::Renderer::Feature::FaceCulling); 
+	GL::Renderer::enable(GL::Renderer::Feature::Blending);
 
+	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 	GL::Renderer::setClearColor(backgroundColor);
 }
 
@@ -47,9 +49,17 @@ void	Mod1::mouseScrollEvent(MouseScrollEvent &event)
 
 void	Mod1::keyReleaseEvent(KeyEvent &event)
 {
-	if (event.key() == KeyEvent::Key::Esc) {
-		event.setAccepted();
-		this->exit();
+	switch (event.key()) {
+		case KeyEvent::Key::Esc:
+			event.setAccepted();
+			this->exit();
+			break;
+		case KeyEvent::Key::N:
+			this->updateSimulation(this->timeline.previousFrameDuration());
+			break;			
+		default:
+			event.setAccepted(false);
+			break;
 	}
 }
 
@@ -81,7 +91,12 @@ void	Mod1::drawEvent()
 		.setNormalMatrix(this->transformationMatrix.normalMatrix())
 		.setProjectionMatrix(this->projectionMatrix);
 
-	this->updateSimulation(this->timeline.previousFrameDuration());
+	if (this->timeToUpdate > this->timeStep) {
+		this->updateSimulation(this->timeStep);
+		this->timeToUpdate = 0.0;
+	}
+
+	this->timeToUpdate += this->timeline.previousFrameDuration();
 
 	this->shader.draw(this->terrainMesh);
 	this->shader.draw(std::move(this->computeWaterMesh()));

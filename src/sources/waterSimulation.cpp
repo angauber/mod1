@@ -13,8 +13,9 @@ void	WaterSimulation::handleTerrain()
 	for (int i = 0; i < this->gridSize; i++) {
 		for (int j = 0; j < this->gridSize; j++) {
 			this->grid[i][j].terrainHeight = this->interpolateTerrain(i * this->precision, j * this->precision);
-			if (i > 40 && i < 60 && j > 40 && j < 60)
+			if (i > 40 && i < 60 && j > 40 && j < 60) {
 				this->grid[i][j].waterDepth = 0.2f;
+			}
 		}
 	}
 }
@@ -55,7 +56,8 @@ float	WaterSimulation::updatePipeFlow(const Cell &cell0, const Cell &cell1, floa
 	float deltaSurface {0.0f};
 
 	/**
-	 *  If one of the two cells is dry and the other has a water height inferior to the terrainHeight of the first one, block the flow
+	 *  If one of the two cells is dry and the other has a water height inferior to the terrainHeight of the first one
+	 *  block the flow
 	 */
 	if ((this->isDry(cell1) && this->waterHeight(cell0) < cell1.terrainHeight) ||
 		(this->isDry(cell0) && this->waterHeight(cell1) < cell0.terrainHeight)) {
@@ -75,7 +77,10 @@ float	WaterSimulation::updatePipeFlow(const Cell &cell0, const Cell &cell1, floa
 
 	pipeFlow += pipeCrossSection * (this->gravity / this->cellSize) * deltaSurface * timestep;
 
-	return pipeFlow *= (1.0f - (timestep / 3));
+	/**
+	 * Improve stability
+	 */
+	return pipeFlow *= 1.0f - std::clamp(timestep / 2.0f, 0.0f, 1.0f);
 }
 
 void	WaterSimulation::updateWaterDepth(float timestep)
@@ -96,7 +101,6 @@ void	WaterSimulation::updateWaterDepth(float timestep)
 			// Right Pipe
 			if (j < this->gridSize - 1)
 				pipeFlowSum -= this->grid[i][j].rightPipe;
-
 			// Bottom Pipe
 			if (i < this->gridSize - 1)
 				pipeFlowSum -= this->grid[i][j].downPipe;

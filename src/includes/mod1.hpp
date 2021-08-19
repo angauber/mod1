@@ -29,6 +29,8 @@ class Mod1 : public Platform::Application, public WaterSimulation
         void	drawEvent() override;
 
 		Timeline					timeline;
+		float						timeToUpdate {0.0f};
+		const float					timeStep = {1.0f / 60.0f};
 
 		GL::Mesh					terrainMesh;
 		GL::Mesh					waterMesh;
