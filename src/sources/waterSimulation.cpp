@@ -5,8 +5,9 @@ WaterSimulation::WaterSimulation()
 	this->scenarios["rise"] = std::make_shared<WaterRiseScenario> ();
 	this->scenarios["spread"] = std::make_shared<WaterSpreadScenario> ();
 	this->scenarios["wave"] = std::make_shared<WaveScenario> ();
+	this->scenarios["rain"] = std::make_shared<RainScenario> ();
 
-	this->scenario = "wave";
+	this->scenario = "rain";
 
 	this->timeline.start();
 }
@@ -103,14 +104,14 @@ float	WaterSimulation::updatePipeFlow(const Cell &cell0, const Cell &cell1, floa
 		deltaSurface = deltaSurface > cell1.waterDepth ? cell1.waterDepth : deltaSurface;
 	}
 
-	pipeCrossSection *= std::abs(deltaSurface);
+	pipeCrossSection *= std::abs(deltaSurface) * 1.5f;
 
 	pipeFlow += pipeCrossSection * (this->gravity / this->cellSize) * deltaSurface * timestep;
 
 	/**
 	 * Improve stability
 	 */
-	return pipeFlow * (1.0f - std::clamp(timestep / 2.0f, 0.0f, 1.0f));
+	return pipeFlow * std::clamp(1.0f - (timestep / 3.0f), 0.0f, 1.0f);
 }
 
 void	WaterSimulation::updateWaterDepth(float timestep)

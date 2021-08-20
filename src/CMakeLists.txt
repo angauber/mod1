@@ -20,6 +20,7 @@ add_executable(mod1 sources/mod1.cpp
 					sources/waterRiseScenario.cpp
 					sources/waterSpreadScenario.cpp
 					sources/waveScenario.cpp
+					sources/rainScenario.cpp
 )
 
 target_link_libraries(mod1 PRIVATE

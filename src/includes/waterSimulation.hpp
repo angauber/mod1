@@ -15,6 +15,7 @@
 #include "waterRiseScenario.hpp"
 #include "waterSpreadScenario.hpp"
 #include "waveScenario.hpp"
+#include "rainScenario.hpp"
 
 using namespace Magnum;
 
