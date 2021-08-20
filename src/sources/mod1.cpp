@@ -95,7 +95,6 @@ void	Mod1::drawEvent()
 		this->updateSimulation(this->timeStep);
 		this->timeToUpdate = 0.0;
 	}
-
 	this->timeToUpdate += this->timeline.previousFrameDuration();
 
 	this->shader.draw(this->terrainMesh);

@@ -7,7 +7,7 @@ find_package(Magnum REQUIRED
 
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -g")
 
@@ -15,7 +15,11 @@ add_executable(mod1 sources/mod1.cpp
 					sources/mod1Parser.cpp
 					sources/terrainDefinition.cpp
 					sources/meshCreation.cpp
+					sources/grid.cpp
 					sources/waterSimulation.cpp
+					sources/waterRiseScenario.cpp
+					sources/waterSpreadScenario.cpp
+					sources/waveScenario.cpp
 )
 
 target_link_libraries(mod1 PRIVATE
