@@ -11,7 +11,7 @@ using namespace Magnum;
 
 class TerrainDefinition : public Mod1Parser {
 	protected:
-		const float		precision {0.01f};
+		const float		precision {0.004f};
 
 		void		handleTerrain();
 		void	 	debugTerrain() const;

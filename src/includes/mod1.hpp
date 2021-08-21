@@ -32,6 +32,9 @@ class Mod1 : public Platform::Application, public WaterSimulation
 		float						timeToUpdate {0.0f};
 		const float					timeStep = {1.0f / 60.0f};
 
+		float	fpsTime {0.0f};
+		int		fpsCounter {0};
+
 		GL::Mesh					terrainMesh;
 		GL::Mesh					waterMesh;
 

@@ -19,15 +19,16 @@ GL::Mesh	MeshCreation::createMesh()
 		this->positions[i] = (this->positions[i] * Vector3(2.0f)) - Vector3(1.0f);
 	}
 
+
 	/**
 	 *  Compute normals for lighting
 	 */
-	this->normals = MeshTools::generateSmoothNormals(indices, positions);
+	this->normals = MeshTools::generateSmoothNormals(this->indices, this->positions);
 
 	/**
 	 * Build vertices
 	 */
-	for (size_t i = 0; i < positions.size(); i++) {
+	for (std::size_t i = 0; i < this->positions.size(); i++) {
 		vertices.push_back(Vertex {this->positions[i], this->normals[i], this->colors[i]});
 	}
 
