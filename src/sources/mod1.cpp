@@ -65,20 +65,27 @@ void	Mod1::keyReleaseEvent(KeyEvent &event)
 
 void	Mod1::mouseMoveEvent(MouseMoveEvent &event)
 {
-	if (!(event.buttons() & MouseMoveEvent::Button::Left)) {
-		return;
+	if (event.buttons() & MouseMoveEvent::Button::Left) {
+		Vector2 delta = Vector2 {event.relativePosition()} / Vector2 {this->windowSize()} * 3.0f;
+
+		/**
+		 * The X axis on screen (Horizontal) is matched with the Y axis in the world (Elevation)
+		 * The Y axis on screen (Vertical) is matched with the X axis in the world (Horizontal)
+		 * */
+		this->rotationMatrix = Matrix4::rotationX(Rad {delta.y()}) * this->rotationMatrix * Matrix4::rotationY(Rad {delta.x()});
+		this->transformationMatrix = this->translationMatrix * this->rotationMatrix;
+
+		event.setAccepted();
 	}
+	
+	if (event.buttons() & MouseMoveEvent::Button::Right) {
+		Vector2 delta = Vector2 {event.relativePosition()} / Vector2 {this->windowSize()} * 3.0f;
 
-	Vector2 delta = Vector2 {event.relativePosition()} / Vector2 {this->windowSize()} * 3.0f;
+		this->translationMatrix = this->translationMatrix * Matrix4::translation({delta.x(), delta.y() * -1.0f, 0.0f});
+		this->transformationMatrix = this->translationMatrix * this->rotationMatrix;
 
-	/**
-	 * The X axis on screen (Horizontal) is matched with the Y axis in the world (Elevation)
-	 * The Y axis on screen (Vertical) is matched with the X axis in the world (Horizontal)
-	 * */
-	this->rotationMatrix = Matrix4::rotationX(Rad {delta.y()}) * this->rotationMatrix * Matrix4::rotationY(Rad {delta.x()});
-	this->transformationMatrix = this->translationMatrix * this->rotationMatrix;
-
-	event.setAccepted();
+		event.setAccepted();
+	}
 }
 
 void	Mod1::drawEvent()

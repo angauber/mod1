@@ -7,7 +7,7 @@ WaterSimulation::WaterSimulation()
 	this->scenarios["wave"] = std::make_shared<WaveScenario> ();
 	this->scenarios["rain"] = std::make_shared<RainScenario> ();
 
-	this->scenario = "rain";
+	this->scenario = "rise";
 
 	this->timeline.start();
 }

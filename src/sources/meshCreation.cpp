@@ -89,15 +89,15 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	GL::Buffer indexBuffer;
 	std::vector<Vertex> vertices;
 
+	Color4 start {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.3f};
+	Color4 end {33.0f / 255, 92.0f / 255, 255.0f / 255, 1.0f};
+
 	this->fillVectors(
 		size,
 		grid,
 		[] (const Cell &cell) -> float { return cell.terrainHeight + cell.waterDepth; },
 		[] (const Cell &cell) -> bool { return cell.isWet(); },
-		[] (const Cell &cell) -> Color4 {
-			Color4 start {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f};
-			Color4 end {33.0f / 255, 92.0f / 255, 255.0f / 255, 1.0f};
-
+		[start, end] (const Cell &cell) -> Color4 {
 			return Math::lerp(start, end, cell.waterDepth);
 		}
 	);
@@ -107,7 +107,7 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	 */
 	for (int n = 0; n < size; n++) {
 		this->positions.push_back(Vector3 {static_cast<float> (n) / size, grid[n][0].terrainHeight, 0.0f});
-		this->colors.push_back(Color4 {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f});
+		this->colors.push_back(start);
 
 		if (n < size - 1 && (grid[n][0].isWet() || grid[n + 1][0].isWet())) {
 			/**
@@ -131,7 +131,7 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	 */
 	for (int n = 0; n < size; n++) {
 		this->positions.push_back(Vector3 {static_cast<float> (n) / size, grid[n][size - 1].terrainHeight, static_cast<float> (size - 1) / size});
-		this->colors.push_back(Color4 {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f});
+		this->colors.push_back(start);
 
 		if (n < size - 1 && (grid[n][size - 1].isWet() || grid[n + 1][size - 1].isWet())) {
 			/**
@@ -155,7 +155,7 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	 */
 	for (int n = 0; n < size; n++) {
 		this->positions.push_back(Vector3 {0.0f, grid[0][n].terrainHeight, static_cast<float> (n) / size});
-		this->colors.push_back(Color4 {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f});
+		this->colors.push_back(start);
 
 		if (n < size - 1 && (grid[0][n].isWet() || grid[0][n + 1].isWet())) {
 			/**
@@ -179,7 +179,7 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	 */
 	for (int n = 0; n < size; n++) {
 		this->positions.push_back(Vector3 {static_cast<float> (size - 1) / size, grid[size - 1][n].terrainHeight, static_cast<float> (n) / size});
-		this->colors.push_back(Color4 {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f});
+		this->colors.push_back(start);
 
 		if (n < size - 1 && (grid[size - 1][n].isWet() || grid[size - 1][n + 1].isWet())) {
 			/**
