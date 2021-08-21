@@ -65,14 +65,16 @@ void	MeshCreation::fillVectors(int size, const SimulationGrid &grid, std::functi
 			this->positions.push_back(Vector3 {static_cast<float> (i) / size, height(grid[i][j]), static_cast<float> (j) / size});
 			this->colors.push_back(getColor(grid[i][j]));
 
-			if (shouldRender(grid[i][j])) {
 				// Building two triangles, vertex need to be ordered in trigonometric direction
-				if (i < size - 1 && j < size - 1) {
+			if (i < size - 1 && j < size - 1) {
+				if (shouldRender(grid[i][j]) && shouldRender(grid[i][j + 1]) && shouldRender(grid[i + 1][j])) {
 					// Upper triangle
 					this->indices.push_back(id(i, j, size));
 					this->indices.push_back(id(i, j + 1, size));
 					this->indices.push_back(id(i + 1, j, size));
+				}
 
+				if (shouldRender(grid[i + 1][j]) && shouldRender(grid[i][j + 1]) && shouldRender(grid[i + 1][j + 1])) {
 					// lower triangle
 					this->indices.push_back(id(i + 1, j, size));
 					this->indices.push_back(id(i, j + 1, size));
