@@ -19,16 +19,12 @@
 
 using namespace Magnum;
 
-struct TerrainVertex {
+int		id(int i, int j, int size);
+
+struct Vertex {
 	Vector3 position;
 	Vector3 normal;
     Color4 color;
-};
-
-struct WaterVertex {
-	Vector3 position;
-	Vector3 normal;
-	Color4 color;
 };
 
 class MeshCreation

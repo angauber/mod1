@@ -85,20 +85,29 @@ void	Mod1::drawEvent()
 {
 	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
 
-	this->shader
-		.setShininess(200.0f)
-		.setTransformationMatrix(this->transformationMatrix)
-		.setNormalMatrix(this->transformationMatrix.normalMatrix())
-		.setProjectionMatrix(this->projectionMatrix);
-
 	if (this->timeToUpdate > this->timeStep) {
 		this->updateSimulation(this->timeStep);
 		this->timeToUpdate = 0.0;
 	}
 	this->timeToUpdate += this->timeline.previousFrameDuration();
 
+	this->shader
+		.setShininess(200.0f)
+		.setTransformationMatrix(this->transformationMatrix)
+		.setProjectionMatrix(this->projectionMatrix);
+
+	GL::Renderer::setFaceCullingMode(GL::Renderer::PolygonFacing::Back);
+	this->shader.setNormalMatrix(this->transformationMatrix.normalMatrix());
+
 	this->shader.draw(this->terrainMesh);
 	this->shader.draw(std::move(this->computeWaterMesh()));
+
+	GL::Renderer::setFaceCullingMode(GL::Renderer::PolygonFacing::Front);
+	this->shader.setNormalMatrix(this->transformationMatrix.normalMatrix() * -1.0f);
+
+	this->shader.draw(this->terrainMesh);
+	this->shader.draw(std::move(this->computeWaterMesh()));
+
 
 	this->swapBuffers();
 	this->redraw();

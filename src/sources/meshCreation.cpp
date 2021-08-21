@@ -1,11 +1,16 @@
 #include "meshCreation.hpp"
 
+int		id(int i, int j, int size)
+{
+	return (i * size) + j;
+}
+
 GL::Mesh	MeshCreation::createMesh()
 {
 	GL::Mesh mesh;
 	GL::Buffer verticesBuffer;
 	GL::Buffer indexBuffer;
-	std::vector<TerrainVertex> vertices;
+	std::vector<Vertex> vertices;
 
 	/**
 	 * Transform from normalized to -1 +1
@@ -23,7 +28,7 @@ GL::Mesh	MeshCreation::createMesh()
 	 * Build vertices
 	 */
 	for (size_t i = 0; i < positions.size(); i++) {
-		vertices.push_back(TerrainVertex {this->positions[i], this->normals[i], this->colors[i]});
+		vertices.push_back(Vertex {this->positions[i], this->normals[i], this->colors[i]});
 	}
 
 	/**
@@ -63,16 +68,14 @@ void	MeshCreation::fillVectors(int size, const SimulationGrid &grid, std::functi
 				// Building two triangles, vertex need to be ordered in trigonometric direction
 				if (i < size - 1 && j < size - 1) {
 					// Upper triangle
-					this->indices.push_back(positions.size() - 1);
-					this->indices.push_back(positions.size());
-					this->indices.push_back(positions.size() - 1 + size);
-				}
+					this->indices.push_back(id(i, j, size));
+					this->indices.push_back(id(i, j + 1, size));
+					this->indices.push_back(id(i + 1, j, size));
 
-				if (i < size - 1 && j < size - 1) {
 					// lower triangle
-					this->indices.push_back(positions.size() - 1 + size);
-					this->indices.push_back(positions.size());
-					this->indices.push_back(positions.size() + size);
+					this->indices.push_back(id(i + 1, j, size));
+					this->indices.push_back(id(i, j + 1, size));
+					this->indices.push_back(id(i + 1, j + 1, size));
 				}
 			}
 		}
@@ -84,13 +87,13 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	GL::Mesh mesh;
 	GL::Buffer verticesBuffer;
 	GL::Buffer indexBuffer;
-	std::vector<WaterVertex> vertices;
+	std::vector<Vertex> vertices;
 
 	this->fillVectors(
 		size,
 		grid,
 		[] (const Cell &cell) -> float { return cell.terrainHeight + cell.waterDepth; },
-		[] (const Cell &cell) -> bool { return cell.waterDepth > 0.001f; },
+		[] (const Cell &cell) -> bool { return cell.isWet(); },
 		[] (const Cell &cell) -> Color4 {
 			Color4 start {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f};
 			Color4 end {33.0f / 255, 92.0f / 255, 255.0f / 255, 1.0f};
@@ -98,6 +101,102 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 			return Math::lerp(start, end, cell.waterDepth);
 		}
 	);
+
+	/**
+	 *  Left side
+	 */
+	for (int n = 0; n < size; n++) {
+		this->positions.push_back(Vector3 {static_cast<float> (n) / size, grid[n][0].terrainHeight, 0.0f});
+		this->colors.push_back(Color4 {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f});
+
+		if (n < size - 1 && (grid[n][0].isWet() || grid[n + 1][0].isWet())) {
+			/**
+			 * Upper triangle
+			 */
+			this->indices.push_back(id(n, 0, size));
+			this->indices.push_back(this->positions.size() - 1);
+			this->indices.push_back(id(n + 1, 0, size));
+
+			/**
+			 * Lower triangle
+			 */
+			this->indices.push_back(id(n + 1, 0, size));
+			this->indices.push_back(this->positions.size() - 1);
+			this->indices.push_back(this->positions.size());
+		}
+	}
+
+	/**
+	 *  Right side
+	 */
+	for (int n = 0; n < size; n++) {
+		this->positions.push_back(Vector3 {static_cast<float> (n) / size, grid[n][size - 1].terrainHeight, static_cast<float> (size - 1) / size});
+		this->colors.push_back(Color4 {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f});
+
+		if (n < size - 1 && (grid[n][size - 1].isWet() || grid[n + 1][size - 1].isWet())) {
+			/**
+			 * Upper triangle
+			 */
+			this->indices.push_back(id(n, size - 1, size));
+			this->indices.push_back(this->positions.size() - 1);
+			this->indices.push_back(this->positions.size());
+
+			/**
+			 * Lower triangle
+			 */
+			this->indices.push_back(id(n, size - 1, size));
+			this->indices.push_back(this->positions.size());
+			this->indices.push_back(id(n + 1, size - 1, size));
+		}
+	}
+
+	/**
+	 *  Back side
+	 */
+	for (int n = 0; n < size; n++) {
+		this->positions.push_back(Vector3 {0.0f, grid[0][n].terrainHeight, static_cast<float> (n) / size});
+		this->colors.push_back(Color4 {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f});
+
+		if (n < size - 1 && (grid[0][n].isWet() || grid[0][n + 1].isWet())) {
+			/**
+			 * Upper triangle
+			 */
+			this->indices.push_back(id(0, n, size));
+			this->indices.push_back(this->positions.size() - 1);
+			this->indices.push_back(id(0, n + 1, size));
+
+			/**
+			 * Lower triangle
+			 */
+			this->indices.push_back(id(0, n + 1, size));
+			this->indices.push_back(this->positions.size() - 1);
+			this->indices.push_back(this->positions.size());
+		}
+	}
+
+	/**
+	 *  Front side
+	 */
+	for (int n = 0; n < size; n++) {
+		this->positions.push_back(Vector3 {static_cast<float> (size - 1) / size, grid[size - 1][n].terrainHeight, static_cast<float> (n) / size});
+		this->colors.push_back(Color4 {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.5f});
+
+		if (n < size - 1 && (grid[size - 1][n].isWet() || grid[size - 1][n + 1].isWet())) {
+			/**
+			 * Upper triangle
+			 */
+			this->indices.push_back(id(size - 1, n, size));
+			this->indices.push_back(this->positions.size() - 1);
+			this->indices.push_back(id(size - 1, n + 1, size));
+
+			/**
+			 * Lower triangle
+			 */
+			this->indices.push_back(id(size - 1, n + 1, size));
+			this->indices.push_back(this->positions.size() - 1);
+			this->indices.push_back(this->positions.size());
+		}
+	}
 
 	return this->createMesh();
 }
@@ -107,7 +206,7 @@ GL::Mesh	MeshCreation::createTerrainMesh(int size, const SimulationGrid &grid)
 	GL::Mesh mesh;
 	GL::Buffer verticesBuffer;
 	GL::Buffer indexBuffer;
-	std::vector<TerrainVertex> vertices;
+	std::vector<Vertex> vertices;
 
 	/**
 	 * Could use a multi gradient of some sort
