@@ -21,6 +21,29 @@ std::shared_ptr<Scenario>	WaterSimulation::getScenario()
 	throw std::runtime_error(std::string {"Scenario: "} + this->scenario + std::string {"does not exists"});
 }
 
+std::string	WaterSimulation::getScenarioKey() const
+{
+	return this->scenario;
+}
+
+void	WaterSimulation::setScenario(const std::string &key)
+{
+	this->scenario = key;
+
+	this->resetScenario();
+}
+
+void	WaterSimulation::resetScenario()
+{
+	for (std::size_t i = 0; i < this->gridSize; i++) {
+		for (std::size_t j = 0; j < this->gridSize; j++) {
+			this->grid[i][j].clear();
+		}
+	}
+
+	this->getScenario()->setupScenario(this->grid, this->gridSize);
+}
+
 SimulationGrid	WaterSimulation::getSimulationGrid() const
 {
 	return this->grid;
@@ -104,7 +127,7 @@ float	WaterSimulation::updatePipeFlow(const Cell &cell0, const Cell &cell1, floa
 		deltaSurface = deltaSurface > cell1.waterDepth ? cell1.waterDepth : deltaSurface;
 	}
 
-	pipeCrossSection *= std::abs(deltaSurface) * 1.5f;
+	pipeCrossSection *= std::abs(deltaSurface) * this->viscosity;
 
 	pipeFlow += pipeCrossSection * (this->gravity / this->cellSize) * deltaSurface * timestep;
 

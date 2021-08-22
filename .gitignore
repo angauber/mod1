@@ -2,3 +2,4 @@ build
 mod1
 *.swp
 vgcore.*
+imgui.ini

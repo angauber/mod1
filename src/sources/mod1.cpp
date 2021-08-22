@@ -28,63 +28,16 @@ void	Mod1::setupRendering()
 
 	this->timeline.start();
 
+	this->imgui = ImGuiIntegration::Context(Vector2 {windowSize()} / this->dpiScaling(), this->windowSize(), this->framebufferSize());
+
 	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
     GL::Renderer::enable(GL::Renderer::Feature::FaceCulling); 
 	GL::Renderer::enable(GL::Renderer::Feature::Blending);
 
-	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
+	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+
 	GL::Renderer::setClearColor(backgroundColor);
-}
-
-void	Mod1::mouseScrollEvent(MouseScrollEvent &event)
-{
-	float delta {event.offset().y()};
-	Vector3 translation {0.0f, 0.0f, delta};
-
-	this->translationMatrix = this->translationMatrix * Matrix4::translation(translation * 0.3f);
-	this->transformationMatrix = this->translationMatrix * this->rotationMatrix;
-
-	event.setAccepted();
-}
-
-void	Mod1::keyReleaseEvent(KeyEvent &event)
-{
-	switch (event.key()) {
-		case KeyEvent::Key::Esc:
-			event.setAccepted();
-			this->exit();
-			break;
-		case KeyEvent::Key::N:
-			this->updateSimulation(this->timeline.previousFrameDuration());
-			break;			
-		default:
-			event.setAccepted(false);
-			break;
-	}
-}
-
-void	Mod1::mouseMoveEvent(MouseMoveEvent &event)
-{
-	if (!(event.buttons() & MouseMoveEvent::Button::Left || event.buttons() & MouseMoveEvent::Button::Right)) {
-		return ;
-	}
-
-	Vector2 delta = Vector2 {event.relativePosition()} / Vector2 {this->windowSize()} * 3.0f;
-
-	if (event.buttons() & MouseMoveEvent::Button::Left) {
-		/**
-		 * The X axis on screen (Horizontal) is matched with the Y axis in the world (Elevation)
-		 * The Y axis on screen (Vertical) is matched with the X axis in the world (Horizontal)
-		 * */
-		this->rotationMatrix = Matrix4::rotationX(Rad {delta.y()}) * this->rotationMatrix * Matrix4::rotationY(Rad {delta.x()});
-	}
-	
-	if (event.buttons() & MouseMoveEvent::Button::Right) {
-		this->translationMatrix = this->translationMatrix * Matrix4::translation({delta.x(), delta.y() * -1.0f, 0.0f});
-	}
-
-	this->transformationMatrix = this->translationMatrix * this->rotationMatrix;
-	event.setAccepted();
 }
 
 void	Mod1::drawEvent()
@@ -92,15 +45,16 @@ void	Mod1::drawEvent()
 	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
 
 	if (this->fpsTime >= 1.0f) {
-		Debug{} << "FPS" << this->fpsCounter;
+		this->fps = this->fpsCounter;
 		this->fpsCounter = 0;
 		this->fpsTime = 0.0f;
 	}
 
-	if (this->timeToUpdate > this->timeStep) {
+	if (this->running && this->timeToUpdate > this->timeStep) {
 		this->updateSimulation(this->timeStep);
 		this->timeToUpdate = 0.0;
 	}
+
 	this->timeToUpdate += this->timeline.previousFrameDuration();
 	this->fpsTime += this->timeline.previousFrameDuration();
 	this->fpsCounter++;
@@ -122,8 +76,26 @@ void	Mod1::drawEvent()
 	this->shader.draw(this->terrainMesh);
 	this->shader.draw(std::move(this->computeWaterMesh()));
 
+	this->drawGUI();
 
 	this->swapBuffers();
 	this->redraw();
 	this->timeline.nextFrame();
 }
+
+// Helper to display a little (?) mark which shows a tooltip when hovered.
+// In your own code you may want to display an actual icon if you are using a merged icon fonts (see docs/FONTS.md)
+static void HelpMarker(const char *desc)
+{
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
+MAGNUM_APPLICATION_MAIN(Mod1)

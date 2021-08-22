@@ -85,6 +85,32 @@ void	MeshCreation::fillVectors(int size, const SimulationGrid &grid, std::functi
 	}
 }
 
+GL::Mesh	MeshCreation::createTerrainMesh(int size, const SimulationGrid &grid)
+{
+	GL::Mesh mesh;
+	GL::Buffer verticesBuffer;
+	GL::Buffer indexBuffer;
+	std::vector<Vertex> vertices;
+
+	Color4 start {this->terrainStartColor[0], this->terrainStartColor[1], this->terrainStartColor[2], 1.0f};
+	Color4 end {this->terrainEndColor[0], this->terrainEndColor[1], this->terrainEndColor[2], 1.0f};
+
+	/**
+	 * Could use a multi gradient of some sort
+	 */
+	this->fillVectors(
+			size,
+			grid,
+			[] (const Cell &cell) -> float { return cell.terrainHeight; },
+			[] (const Cell &cell) -> bool { return true; },
+			[start, end] (const Cell &cell) -> Color4 {
+				return Math::lerp(start, end, cell.terrainHeight * 4.0f);
+			}
+	);
+
+	return this->createMesh();
+}
+
 GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 {
 	GL::Mesh mesh;
@@ -92,13 +118,13 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	GL::Buffer indexBuffer;
 	std::vector<Vertex> vertices;
 
-	Color4 start {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.3f};
-	Color4 end {33.0f / 255, 92.0f / 255, 255.0f / 255, 1.0f};
+	Color4 start {this->waterStartColor[0], this->waterStartColor[1], this->waterStartColor[2], this->waterStartColor[3]};
+	Color4 end {this->waterEndColor[0], this->waterEndColor[1], this->waterEndColor[2], this->waterEndColor[3]};
 
 	this->fillVectors(
 		size,
 		grid,
-		[] (const Cell &cell) -> float { return cell.terrainHeight + cell.waterDepth; },
+		[] (const Cell &cell) -> float { return cell.surfaceHeight(); },
 		[] (const Cell &cell) -> bool { return cell.isWet(); },
 		[start, end] (const Cell &cell) -> Color4 {
 			return Math::lerp(start, end, cell.waterDepth);
@@ -110,7 +136,7 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	 */
 	for (int n = 0; n < size; n++) {
 		this->positions.push_back(Vector3 {static_cast<float> (n) / size, grid[n][0].terrainHeight, 0.0f});
-		this->colors.push_back(start);
+		this->colors.push_back(Math::lerp(start, end, grid[n][0].waterDepth));
 
 		if (n < size - 1 && (grid[n][0].isWet() || grid[n + 1][0].isWet())) {
 			/**
@@ -134,7 +160,7 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	 */
 	for (int n = 0; n < size; n++) {
 		this->positions.push_back(Vector3 {static_cast<float> (n) / size, grid[n][size - 1].terrainHeight, static_cast<float> (size - 1) / size});
-		this->colors.push_back(start);
+		this->colors.push_back(Math::lerp(start, end, grid[n][size - 1].waterDepth));
 
 		if (n < size - 1 && (grid[n][size - 1].isWet() || grid[n + 1][size - 1].isWet())) {
 			/**
@@ -158,7 +184,7 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	 */
 	for (int n = 0; n < size; n++) {
 		this->positions.push_back(Vector3 {0.0f, grid[0][n].terrainHeight, static_cast<float> (n) / size});
-		this->colors.push_back(start);
+		this->colors.push_back(Math::lerp(start, end, grid[0][n].waterDepth));
 
 		if (n < size - 1 && (grid[0][n].isWet() || grid[0][n + 1].isWet())) {
 			/**
@@ -182,7 +208,7 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 	 */
 	for (int n = 0; n < size; n++) {
 		this->positions.push_back(Vector3 {static_cast<float> (size - 1) / size, grid[size - 1][n].terrainHeight, static_cast<float> (n) / size});
-		this->colors.push_back(start);
+		this->colors.push_back(Math::lerp(start, end, grid[size - 1][n].waterDepth));
 
 		if (n < size - 1 && (grid[size - 1][n].isWet() || grid[size - 1][n + 1].isWet())) {
 			/**
@@ -203,29 +229,3 @@ GL::Mesh	MeshCreation::createWaterMesh(int size, const SimulationGrid &grid)
 
 	return this->createMesh();
 }
-
-GL::Mesh	MeshCreation::createTerrainMesh(int size, const SimulationGrid &grid)
-{
-	GL::Mesh mesh;
-	GL::Buffer verticesBuffer;
-	GL::Buffer indexBuffer;
-	std::vector<Vertex> vertices;
-
-	/**
-	 * Could use a multi gradient of some sort
-	 */
-	this->fillVectors(
-			size,
-			grid,
-			[] (const Cell &cell) -> float { return cell.terrainHeight; },
-			[] (const Cell &cell) -> bool { return true; },
-			[] (const Cell &cell) -> Color4 {
-				Color4 start {143.0f / 255, 79.0f / 255, 31.0f / 255, 1.0};
-
-				return start;
-			}
-	);
-
-	return this->createMesh();
-}
-

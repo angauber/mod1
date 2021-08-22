@@ -32,6 +32,12 @@ class MeshCreation
 	protected:
 		GL::Mesh	createTerrainMesh(int size, const SimulationGrid &grid);
 		GL::Mesh	createWaterMesh(int size, const SimulationGrid &grid);
+	
+		float	terrainStartColor[3] {0.35f, 0.235f, 0.157f};
+		float	terrainEndColor[3] {0.35f, 0.235f, 0.157f};
+
+		float	waterStartColor[4] {33.0f / 255, 118.0f / 255, 255.0f / 255, 0.3f};
+		float	waterEndColor[4] {33.0f / 255, 92.0f / 255, 255.0f / 255, 1.0f};
 
 	private:
 		std::vector<Vector3>		positions;
