@@ -44,6 +44,11 @@ void	WaterSimulation::resetScenario()
 	this->getScenario()->setupScenario(this->grid, this->gridSize);
 }
 
+void	WaterSimulation::drawScenarioGUI()
+{
+	this->getScenario()->drawGUI(this->grid, this->gridSize);
+}
+
 SimulationGrid	WaterSimulation::getSimulationGrid() const
 {
 	return this->grid;

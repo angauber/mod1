@@ -16,18 +16,8 @@ void	Mod1::drawGUI()
 
 		ImGui::Text("%d FPS", this->fps);
 
-		if (ImGui::TreeNode("Simulation")) {
-			static std::string label {"Pause"};
+		if (ImGui::TreeNode("Scenario")) {
 			
-			if (ImGui::Button(label.c_str())) {
-				this->running = !this->running;
-				label = this->running ? "Pause" : "Play";
-			}
-
-			if (ImGui::Button("Reset")) {
-				this->resetScenario();
-			}
-
 			if (ImGui::BeginCombo("Scenario", this->getScenarioKey().c_str())) {
 				for (const auto &key : std::views::keys(this->scenarios)) {
         	        const bool isSelected = key == this->getScenarioKey();
@@ -38,6 +28,20 @@ void	Mod1::drawGUI()
 				}
 
 				ImGui::EndCombo();
+			}
+
+
+			this->drawScenarioGUI();
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Simulation")) {
+			static std::string label {"Pause"};
+			
+			if (ImGui::Button(label.c_str())) {
+				this->running = !this->running;
+				label = this->running ? "Pause" : "Play";
 			}
 
 	        ImGui::SliderFloat("Cell Size", &this->cellSize, 0.05f, 1.0f);

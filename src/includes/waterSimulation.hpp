@@ -32,6 +32,7 @@ class WaterSimulation : public TerrainDefinition, public MeshCreation
 		std::shared_ptr<Scenario>	getScenario();
 		void						setScenario(const std::string &key);
 		void						resetScenario();
+		void						drawScenarioGUI();
 
 		std::map<std::string, std::shared_ptr<Scenario>>	scenarios;
 		const int											gridSize {static_cast<int> (1.0f / this->precision)};
