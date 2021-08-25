@@ -24,27 +24,15 @@ class WaterSimulation : public TerrainDefinition, public MeshCreation
 	protected:
 									WaterSimulation();
 		void						handleTerrain();
-		GL::Mesh					computeTerrainMesh();
-		GL::Mesh					computeWaterMesh();
 		void						updateSimulation(float timestep);
-		std::string					getScenarioKey() const;
-		std::shared_ptr<Scenario>	getScenario();
-		void						setScenario(const std::string &key);
-		void						resetScenario();
-		void						drawScenarioGUI();
-		std::shared_ptr<Grid>		getSimulationGrid() const;
 
-		std::map<std::string, std::shared_ptr<Scenario>>	scenarios;
+		std::shared_ptr<Grid>		grid;
 		const int											gridSize {static_cast<int> (1.0f / this->precision)};
 		float												cellSize {0.1f};
 		const float											gravity {9.81f};
 		float												viscosity {1.5f};
-	private:
-		std::shared_ptr<Grid>								grid;
-		Timeline											timeline;
-		float												timeToUpdate {0.0f};
-		std::string											scenario {"rain"};
 
+	private:
 		void						updatePipeFlows(float timestep);
 		float						updatePipeFlow(const Cell *cell0, const Cell *cell1, float pipeFlow, float timestep);
 		void						updateWaterDepth(float timestep);

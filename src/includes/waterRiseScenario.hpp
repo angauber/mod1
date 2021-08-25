@@ -8,6 +8,9 @@ class WaterRiseScenario : public Scenario {
 		using	Scenario::Scenario;
 		float	getTimeStep() const override;
 		void	updateScenario() const override;
+		void	drawGUI() override;
+	private:
+		float	rise {40.0f};
 };
 
 #endif

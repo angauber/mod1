@@ -59,7 +59,7 @@ void	Mod1::drawGUI()
 
 			if (ImGui::ColorEdit3("Low altitude", this->terrainStartColor, ImGuiColorEditFlags_NoInputs) ||
 				ImGui::ColorEdit3("High altitude", this->terrainEndColor, ImGuiColorEditFlags_NoInputs)) {
-				this->terrainMesh = this->computeTerrainMesh();
+				this->terrainMesh = this->createTerrainMesh();
 			}
 			
 			ImGui::TreePop();

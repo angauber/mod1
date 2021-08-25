@@ -19,5 +19,7 @@ void	RainScenario::updateScenario() const
 
 void	RainScenario::drawGUI()
 {
+	Scenario::drawGUI();
+
 	ImGui::SliderFloat("Rain flow", &this->rise, 0.0f, 50.0f);
 }
