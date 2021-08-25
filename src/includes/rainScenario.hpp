@@ -5,9 +5,12 @@
 
 class RainScenario : public Scenario {
 	public:
+		using	Scenario::Scenario;
 		float	getTimeStep() const override;
-		void	setupScenario(SimulationGrid &grid, std::size_t size) const override;
-		void	updateScenario(SimulationGrid &grid, std::size_t size) const override;
+		void	updateScenario() const override;
+		virtual void	drawGUI() override;
+	private:
+		float	rise {10.0f};
 };
 
 #endif

@@ -23,6 +23,7 @@ add_executable(mod1 sources/mod1.cpp
 					sources/meshCreation.cpp
 					sources/grid.cpp
 					sources/waterSimulation.cpp
+					sources/scenario.cpp
 					sources/waterRiseScenario.cpp
 					sources/waterSpreadScenario.cpp
 					sources/waveScenario.cpp
