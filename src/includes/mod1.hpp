@@ -13,12 +13,13 @@
 #include <Magnum/Timeline.h>
 #include <Magnum/ImGuiIntegration/Context.hpp>
 
+#include "scenarioHandler.hpp"
 #include "terrainDefinition.hpp"
 #include "waterSimulation.hpp"
 
 using namespace Magnum;
 
-class Mod1 : public Platform::Application, public WaterSimulation
+class Mod1 : public Platform::Application, public ScenarioHandler
 {
     public:
         explicit Mod1(const Arguments& arguments);

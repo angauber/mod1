@@ -5,53 +5,6 @@ WaterSimulation::WaterSimulation()
 	this->grid = std::make_shared<Grid> (this->gridSize);
 
 	this->setGrid(this->grid);
-
-	this->scenarios["rise"] = std::make_shared<WaterRiseScenario> (this->grid);
-	this->scenarios["spread"] = std::make_shared<WaterSpreadScenario> (this->grid);
-	this->scenarios["wave"] = std::make_shared<WaveScenario> (this->grid);
-	this->scenarios["rain"] = std::make_shared<RainScenario> (this->grid);
-
-	this->scenario = "rain";
-
-	this->timeline.start();
-}
-
-std::shared_ptr<Scenario>	WaterSimulation::getScenario()
-{
-	if (this->scenarios.contains(this->scenario)) {
-		return this->scenarios[this->scenario];
-	}
-
-	throw std::runtime_error(std::string {"Scenario: "} + this->scenario + std::string {"does not exists"});
-}
-
-std::string	WaterSimulation::getScenarioKey() const
-{
-	return this->scenario;
-}
-
-void	WaterSimulation::setScenario(const std::string &key)
-{
-	this->scenario = key;
-
-	this->resetScenario();
-}
-
-void	WaterSimulation::resetScenario()
-{
-	this->grid->reset();
-
-	this->getScenario()->setupScenario();
-}
-
-void	WaterSimulation::drawScenarioGUI()
-{
-	this->getScenario()->drawGUI();
-}
-
-std::shared_ptr<Grid>	WaterSimulation::getSimulationGrid() const
-{
-	return this->grid;
 }
 
 void	WaterSimulation::handleTerrain()
@@ -63,36 +16,12 @@ void	WaterSimulation::handleTerrain()
 			this->grid->get(i, j)->terrainHeight = this->interpolateTerrain(i * this->precision, j * this->precision);
 		}
 	}
-
-	this->getScenario()->setupScenario();
-}
-
-GL::Mesh	WaterSimulation::computeTerrainMesh()
-{
-	return this->createTerrainMesh();
-}
-
-GL::Mesh	WaterSimulation::computeWaterMesh()
-{
-	return this->createWaterMesh();
 }
 
 void	WaterSimulation::updateSimulation(float timestep)
 {
-	auto scenario = this->getScenario();
-
-	if (scenario->getTimeStep() > 0.0f) {
-		if (this->timeToUpdate > scenario->getTimeStep()) {
-			scenario->updateScenario();
-			this->timeToUpdate = 0.0f;
-		}
-		this->timeToUpdate += this->timeline.previousFrameDuration();
-	}
-
 	this->updatePipeFlows(timestep);
 	this->updateWaterDepth(timestep);
-
-	this->timeline.nextFrame();
 }
 
 void	WaterSimulation::updatePipeFlows(float timestep)

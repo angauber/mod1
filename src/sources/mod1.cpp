@@ -11,7 +11,7 @@ Mod1::Mod1(const Arguments& arguments): Platform::Application{arguments}
 	} else {
 		WaterSimulation::handleTerrain();
 
-		this->terrainMesh = this->computeTerrainMesh();
+		this->terrainMesh = this->createTerrainMesh();
 
 		this->setupRendering();
 	}
@@ -50,8 +50,11 @@ void	Mod1::drawEvent()
 		this->fpsTime = 0.0f;
 	}
 
+	this->updateScenario();
+
 	if (this->running && this->timeToUpdate > this->timeStep) {
 		this->updateSimulation(this->timeStep);
+		this->waterMesh = this->createWaterMesh();
 		this->timeToUpdate = 0.0;
 	}
 
@@ -68,13 +71,15 @@ void	Mod1::drawEvent()
 	this->shader.setNormalMatrix(this->transformationMatrix.normalMatrix());
 
 	this->shader.draw(this->terrainMesh);
-	this->shader.draw(std::move(this->computeWaterMesh()));
+	if (this->waterMesh.count() > 0)
+		this->shader.draw(this->waterMesh);
 
 	GL::Renderer::setFaceCullingMode(GL::Renderer::PolygonFacing::Front);
 	this->shader.setNormalMatrix(this->transformationMatrix.normalMatrix() * -1.0f);
 
 	this->shader.draw(this->terrainMesh);
-	this->shader.draw(std::move(this->computeWaterMesh()));
+	if (this->waterMesh.count() > 0)
+		this->shader.draw(this->waterMesh);
 
 	this->drawGUI();
 
