@@ -40,7 +40,7 @@ class WaterSimulation : public TerrainDefinition, public MeshCreation
 		const float											gravity {9.81f};
 		float												viscosity {1.5f};
 	private:
-		SimulationGrid										grid {this->gridSize, std::vector<Cell> (this->gridSize)};
+		std::shared_ptr<Grid>								grid;
 		Timeline											timeline;
 		float												timeToUpdate {0.0f};
 		std::string											scenario {"rain"};

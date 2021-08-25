@@ -2,6 +2,8 @@
 
 WaterSimulation::WaterSimulation()
 {
+	this->grid = std::make_shared<Grid> {this->gridSize};
+
 	this->scenarios["rise"] = std::make_shared<WaterRiseScenario> ();
 	this->scenarios["spread"] = std::make_shared<WaterSpreadScenario> ();
 	this->scenarios["wave"] = std::make_shared<WaveScenario> ();

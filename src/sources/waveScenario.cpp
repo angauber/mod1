@@ -7,6 +7,8 @@ float	WaveScenario::getTimeStep() const
 
 void	WaveScenario::setupScenario(SimulationGrid &grid, std::size_t size) const
 {
+	Scenario::setupScenario(grid, size);
+
 	for (std::size_t i = 0; i < size; i++) {
 		for (std::size_t j = 0; j < size; j++) {
 			if (i < size / 20) {

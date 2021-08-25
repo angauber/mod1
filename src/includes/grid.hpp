@@ -16,6 +16,14 @@ class Cell {
 		void	clear();		
 };
 
-typedef std::vector<std::vector<Cell>> SimulationGrid;
+class Grid {
+	public:
+				Grid(std::size_t size);
+		void	reset();
+
+	private:
+		std::vector<std::vector<Cell>>	grid;
+		
+};
 
 #endif
