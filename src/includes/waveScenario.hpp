@@ -5,9 +5,10 @@
 
 class WaveScenario : public Scenario {
 	public:
+		using Scenario::Scenario;
+
 		float	getTimeStep() const override;
-		void	setupScenario(SimulationGrid &grid, std::size_t size) const override;
-		void	updateScenario(SimulationGrid &grid, std::size_t size) const override;
+		void	setupScenario() const override;
 };
 
 #endif

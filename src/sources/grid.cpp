@@ -1,14 +1,17 @@
 #include "grid.hpp"
 
-Grid::Grid(std::size_t size) : this->grid {size, std::vector<Cell> size}
+Grid::Grid(std::size_t size) : size {size}, grid {size * size} {};
 
 void	Grid::reset()
 {
-	for (std::size_t i = 0; i < size; i++) {
-		for (std::size_t j = 0; j < size; j++) {
-			grid[i][j].clear();
-		}
+	for (std::size_t i = 0; i < this->grid.size(); i++) {
+		this->grid[i].clear();
 	}
+}
+
+Cell *	Grid::get(std::size_t i, std::size_t j)
+{
+	return &this->grid[i * this->size + j];
 }
 
 bool	Cell::isDry() const

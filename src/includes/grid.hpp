@@ -18,11 +18,15 @@ class Cell {
 
 class Grid {
 	public:
-				Grid(std::size_t size);
-		void	reset();
+		const std::size_t	size;
+
+							Grid(std::size_t size);
+		
+		void				reset();
+		Cell *				get(std::size_t i, std::size_t j);
 
 	private:
-		std::vector<std::vector<Cell>>	grid;
+		std::vector<Cell>	grid;
 		
 };
 

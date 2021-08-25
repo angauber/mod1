@@ -44,8 +44,6 @@ void	Mod1::drawGUI()
 				label = this->running ? "Pause" : "Play";
 			}
 
-	        ImGui::SliderFloat("Cell Size", &this->cellSize, 0.05f, 1.0f);
-
 	        ImGui::SliderFloat("Viscosity", &this->viscosity, 0.5f, 10.0f);
 
 			ImGui::TreePop();

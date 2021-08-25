@@ -1,20 +1,23 @@
 #include "scenario.hpp"
 
-void	Scenario::setupScenario(SimulationGrid &grid, std::size_t size) const
+Scenario::Scenario(std::shared_ptr<Grid> grid) : grid {grid} {};
+
+void	Scenario::setupScenario() const
 {
-	for (std::size_t i = 0; i < size; i++) {
-		for (std::size_t j = 0; j < size; j++) {
-			grid[i][j].clear();
+	for (std::size_t i = 0; i < this->grid->size; i++) {
+		for (std::size_t j = 0; j < this->grid->size; j++) {
+			this->grid->get(i, j)->clear();
 		}
 	}
 }
 
-void	Scenario::updateScenario(SimulationGrid &grid, std::size_t size) const
+void	Scenario::updateScenario() const
 {}
 
-void	Scenario::drawGUI(SimulationGrid &grid, std::size_t size)
+void	Scenario::drawGUI()
 {
 	if (ImGui::Button("Reset")) {
-		this->setupScenario(grid, size);
+		this->grid->reset();
+		this->setupScenario();
 	}
 }

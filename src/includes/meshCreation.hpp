@@ -21,8 +21,6 @@
 
 using namespace Magnum;
 
-int		id(int i, int j, int size);
-
 struct Vertex {
 	Vector3 position;
 	Vector3 normal;
@@ -49,8 +47,9 @@ class MeshCreation
 		std::vector<Color4>			colors;
 		Containers::Array<Vector3>	normals;
 
+		std::size_t	id(std::size_t i, std::size_t j);
 		GL::Mesh	createMesh();
-		void		fillVectors(std::function<float(Cell)> height, std::function<bool(Cell)> shouldRender, std::function<Color4(Cell)> getColor);
+		void		fillVectors(std::function<float(Cell *)> height, std::function<bool(Cell *)> shouldRender, std::function<Color4(Cell *)> getColor);
 };
 
 #endif
