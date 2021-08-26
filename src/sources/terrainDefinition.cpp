@@ -107,36 +107,34 @@ float	TerrainDefinition::interpolateTerrain(float x, float y) const
 	float b {0.0f};
 	float distance;
 	float weight;
+	Vector2 point {x, y};
 
-	std::vector<Vector3> neighbours = this->getClosestPoints(Vector3 {x, y, 0.0f}, 20);
+	std::vector<Vector3> neighbours = this->getClosestPoints(Vector2 {x, y}, 20);
 
-	for (const auto &point : neighbours) {
-		if (x == point.x() && y == point.y()) {
-			return point.z();
+	for (const auto &neighbour : neighbours) {
+		if (point.x() == neighbour.x() && point.y() == neighbour.y()) {
+			return neighbour.z();
 		}
 
-		distance = sqrt(pow(x - point.x(), 2.0f) + pow(y - point.y(), 2.0f));
+		distance = (point - neighbour.xy()).length();
 		weight = pow(1.0f / distance, power);
 
-		a += weight * point.z();
+		a += weight * neighbour.z();
 		b += weight;
 	}
 
 	return b == 0.0f ? 0.0f : a / b;
 }
 
-std::vector<Vector3>	TerrainDefinition::getClosestPoints(Vector3 point, std::size_t nb) const
+std::vector<Vector3>	TerrainDefinition::getClosestPoints(const Vector2 &point, std::size_t nb) const
 {
-	std::vector<Vector3> points	= this->points;
+	std::vector<Vector3> neighbours	= this->points;
 
-	std::sort(points.begin(), points.end(), [point] (const Vector3 &a, const Vector3 &b) {
-		float da = sqrt(pow(a.x() - point.x(), 2.0f) + pow(a.y() - point.y(), 2.0f));
-		float db = sqrt(pow(b.x() - point.x(), 2.0f) + pow(b.y() - point.y(), 2.0f));
-
-		return da < db;
+	std::sort(neighbours.begin(), neighbours.end(), [point] (const Vector3 &a, const Vector3 &b) {
+		return (point - a.xy()).length() < (point - b.xy()).length();
 	});
 
-	points.resize(nb);
+	neighbours.resize(nb);
 
-	return points;
+	return neighbours;
 }
