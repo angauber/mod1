@@ -25,11 +25,12 @@ class TerrainDefinition : public Mod1Parser {
 		float					minZ {0};
 		float					maxZ {0};
 
-		void	addPoint(Vector3) override;
-		size_t	getPointCount() const override;
-		void	computeMinMax();
-		void 	computeEdges();
-		void	scale();
+		void					addPoint(Vector3) override;
+		size_t					getPointCount() const override;
+		void					computeMinMax();
+		void					computeEdges();
+		void					scale();
+		std::vector<Vector3>	getClosestPoints(const Vector2 &point, std::size_t nb) const;
 };
 
 #endif
