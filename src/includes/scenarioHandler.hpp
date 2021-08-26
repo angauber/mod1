@@ -30,7 +30,7 @@ class ScenarioHandler : public WaterSimulation
 	private:
 		Timeline											timeline;
 		float												timeToUpdate {0.0f};
-		std::string											scenario {"rain"};
+		std::string											scenario {"rise"};
 };
 
 #endif

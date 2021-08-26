@@ -109,7 +109,7 @@ void	WaterSimulation::updateWaterDepth(float timestep)
 			cell->waterDepth += -1.0f * timestep * (pipeFlowSum / (this->cellSize * this->cellSize));
 
 			// hacky
-			cell->waterDepth = std::clamp(cell->waterDepth, 0.0f, 1.0f);
+			cell->waterDepth = std::clamp(cell->waterDepth, 0.0f, 2.0f);
 		}
 	}
 

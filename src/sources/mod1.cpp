@@ -50,12 +50,14 @@ void	Mod1::drawEvent()
 		this->fpsTime = 0.0f;
 	}
 
-	this->updateScenario();
+	if (this->running) {
+		this->updateScenario();
 
-	if (this->running && this->timeToUpdate > this->timeStep) {
-		this->updateSimulation(this->timeStep);
-		this->waterMesh = this->createWaterMesh();
-		this->timeToUpdate = 0.0;
+		if (this->timeToUpdate > this->timeStep) {
+			this->updateSimulation(this->timeStep);
+			this->waterMesh = this->createWaterMesh();
+			this->timeToUpdate = 0.0;
+		}
 	}
 
 	this->timeToUpdate += this->timeline.previousFrameDuration();

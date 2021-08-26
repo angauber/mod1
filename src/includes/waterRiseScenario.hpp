@@ -3,6 +3,8 @@
 
 #include "scenario.hpp"
 
+#include <Magnum/Magnum.h>
+
 class WaterRiseScenario : public Scenario {
 	public:
 		using	Scenario::Scenario;
