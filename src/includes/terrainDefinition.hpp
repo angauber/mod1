@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <Magnum/Math/Distance.h>
 
 #include "mod1Parser.hpp"
 
@@ -30,6 +31,7 @@ class TerrainDefinition : public Mod1Parser {
 		void	computeMinMax();
 		void 	computeEdges();
 		void	scale();
+		std::vector<Vector3>	getClosestPoints(Vector3 point, std::size_t nb) const;
 };
 
 #endif

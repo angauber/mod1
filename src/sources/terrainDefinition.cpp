@@ -78,13 +78,23 @@ void	TerrainDefinition::scale()
 
 	float norm = std::max(this->maxX, this->maxY);
 
-	Vector3 size {};
-
 	for (auto &point : this->points) {
 		point /= norm;
 	}
 
 	this->computeMinMax();
+
+	/*
+	 * Artificially adding null contours
+	 **/
+	size_t size {10};
+
+	for (std::size_t i = 0; i < size; i++) {
+		this->addPoint(Vector3 {0.0f, static_cast<float> (i) / size, 0.0f});
+		this->addPoint(Vector3 {1.0f, static_cast<float> (i) / size, 0.0f});
+		this->addPoint(Vector3 {static_cast<float> (i) / size, 0.0f, 0.0f});
+		this->addPoint(Vector3 {static_cast<float> (i) / size, 1.0f, 0.0f});
+	}
 }
 
 /**
@@ -92,13 +102,15 @@ void	TerrainDefinition::scale()
  */
 float	TerrainDefinition::interpolateTerrain(float x, float y) const
 {
-	float power {2.0};
+	float power {3.0};
 	float a {0.0f};
 	float b {0.0f};
 	float distance;
 	float weight;
 
-	for (const auto &point : this->points) {
+	std::vector<Vector3> neighbours = this->getClosestPoints(Vector3 {x, y, 0.0f}, 20);
+
+	for (const auto &point : neighbours) {
 		if (x == point.x() && y == point.y()) {
 			return point.z();
 		}
@@ -111,4 +123,20 @@ float	TerrainDefinition::interpolateTerrain(float x, float y) const
 	}
 
 	return b == 0.0f ? 0.0f : a / b;
+}
+
+std::vector<Vector3>	TerrainDefinition::getClosestPoints(Vector3 point, std::size_t nb) const
+{
+	std::vector<Vector3> points	= this->points;
+
+	std::sort(points.begin(), points.end(), [point] (const Vector3 &a, const Vector3 &b) {
+		float da = sqrt(pow(a.x() - point.x(), 2.0f) + pow(a.y() - point.y(), 2.0f));
+		float db = sqrt(pow(b.x() - point.x(), 2.0f) + pow(b.y() - point.y(), 2.0f));
+
+		return da < db;
+	});
+
+	points.resize(nb);
+
+	return points;
 }
