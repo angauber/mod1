@@ -21,29 +21,23 @@ void	WaterSimulation::handleTerrain()
 void	WaterSimulation::updateSimulation(float timestep)
 {
 	this->updatePipeFlows(timestep);
+//	this->fixImpossibleFlows();
 	this->updateWaterDepth(timestep);
 }
 
 void	WaterSimulation::updatePipeFlows(float timestep)
 {
 	Cell *cell;
-	Cell *cellNextCol;
-	Cell *cellNextRow;
 
 	for (int i = 0; i < this->gridSize; i++) {
 		for (int j = 0; j < this->gridSize; j++) {
 			cell = this->grid->get(i, j);
 
-			if (j < this->gridSize - 1) {
-				cellNextCol = this->grid->get(i, j + 1);
-
-				cell->rightPipe = this->updatePipeFlow(cell, cellNextCol, cell->rightPipe, timestep);
-			}
-			if (i < this->gridSize - 1) {
-				cellNextRow = this->grid->get(i + 1, j);
-
-				cell->downPipe = this->updatePipeFlow(cell, cellNextRow, cell->downPipe, timestep);
-			}
+			if (j < this->gridSize - 1)
+				cell->rightPipe = this->updatePipeFlow(cell, this->grid->get(i, j + 1), cell->rightPipe, timestep);
+		
+			if (i < this->gridSize - 1)
+				cell->downPipe = this->updatePipeFlow(cell, this->grid->get(i + 1, j), cell->downPipe, timestep);
 		}
 	}
 }

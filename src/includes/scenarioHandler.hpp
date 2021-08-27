@@ -7,11 +7,11 @@
 #include <Magnum/Timeline.h>
 
 #include "waterSimulation.hpp"
-#include "scenario.hpp"
-#include "waterRiseScenario.hpp"
-#include "waveScenario.hpp"
-#include "rainScenario.hpp"
-#include "waterSpreadScenario.hpp"
+#include "scenarios/scenario.hpp"
+#include "scenarios/waterRiseScenario.hpp"
+#include "scenarios/waveScenario.hpp"
+#include "scenarios/rainScenario.hpp"
+#include "scenarios/waterSpreadScenario.hpp"
 
 using namespace Magnum;
 

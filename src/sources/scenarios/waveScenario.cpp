@@ -1,4 +1,4 @@
-#include "waveScenario.hpp"
+#include "scenarios/waveScenario.hpp"
 
 float	WaveScenario::getTimeStep() const
 {

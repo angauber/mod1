@@ -22,13 +22,14 @@ add_executable(mod1 sources/mod1.cpp
 					sources/terrainDefinition.cpp
 					sources/meshCreation.cpp
 					sources/grid.cpp
+					sources/cell.cpp
 					sources/waterSimulation.cpp
 					sources/scenarioHandler.cpp
-					sources/scenario.cpp
-					sources/waterRiseScenario.cpp
-					sources/waterSpreadScenario.cpp
-					sources/waveScenario.cpp
-					sources/rainScenario.cpp
+					sources/scenarios/scenario.cpp
+					sources/scenarios/waterRiseScenario.cpp
+					sources/scenarios/waterSpreadScenario.cpp
+					sources/scenarios/waveScenario.cpp
+					sources/scenarios/rainScenario.cpp
 )
 
 target_link_libraries(mod1 PRIVATE

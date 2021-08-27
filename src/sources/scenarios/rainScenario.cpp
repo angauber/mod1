@@ -1,4 +1,4 @@
-#include "rainScenario.hpp"
+#include "scenarios/rainScenario.hpp"
 
 float	RainScenario::getTimeStep() const
 {

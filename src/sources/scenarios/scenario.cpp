@@ -1,4 +1,4 @@
-#include "scenario.hpp"
+#include "scenarios/scenario.hpp"
 
 Scenario::Scenario(std::shared_ptr<Grid> grid) : grid {grid} {};
 

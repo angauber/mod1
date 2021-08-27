@@ -11,11 +11,6 @@
 #include "terrainDefinition.hpp"
 #include "meshCreation.hpp"
 #include "grid.hpp"
-#include "scenario.hpp"
-#include "waterRiseScenario.hpp"
-#include "waveScenario.hpp"
-#include "rainScenario.hpp"
-#include "waterSpreadScenario.hpp"
 
 using namespace Magnum;
 
@@ -27,10 +22,10 @@ class WaterSimulation : public TerrainDefinition, public MeshCreation
 		void						updateSimulation(float timestep);
 
 		std::shared_ptr<Grid>		grid;
-		const int											gridSize {static_cast<int> (1.0f / this->precision)};
-		float												cellSize {0.1f};
-		const float											gravity {9.81f};
-		float												viscosity {1.5f};
+		const int					gridSize {static_cast<int> (1.0f / this->precision)};
+		float						cellSize {0.1f};
+		const float					gravity {9.81f};
+		float						viscosity {1.5f};
 
 	private:
 		void						updatePipeFlows(float timestep);

@@ -1,4 +1,4 @@
-#include "waterSpreadScenario.hpp"
+#include "scenarios/waterSpreadScenario.hpp"
 
 float	WaterSpreadScenario::getTimeStep() const
 {
