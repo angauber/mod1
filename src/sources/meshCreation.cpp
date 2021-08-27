@@ -105,7 +105,7 @@ GL::Mesh	MeshCreation::createTerrainMesh()
 	 */
 	this->fillVectors(
 			[] (const Cell *cell) -> float { return cell->terrainHeight; },
-			[] (const Cell *cell) -> bool { return true; },
+			[] (const Cell *cell) -> bool { (void)cell; return true; },
 			[start, end] (const Cell *cell) -> Color4 {
 				return Math::lerp(start, end, cell->terrainHeight * 4.0f);
 			}

@@ -21,7 +21,6 @@ void	WaterSimulation::handleTerrain()
 void	WaterSimulation::updateSimulation(float timestep)
 {
 	this->updatePipeFlows(timestep);
-//	this->fixImpossibleFlows();
 	this->updateWaterDepth(timestep);
 }
 

@@ -65,6 +65,7 @@ void	Mod1::drawEvent()
 	this->fpsCounter++;
 
 	this->shader
+		.setDiffuseColor(0x2f83cc_rgbf)
 		.setShininess(200.0f)
 		.setTransformationMatrix(this->transformationMatrix)
 		.setProjectionMatrix(this->projectionMatrix);
