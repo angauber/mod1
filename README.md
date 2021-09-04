@@ -12,12 +12,16 @@ The project uses [magnum](https://github.com/mosra/magnum) with [ImGui](https://
 
 
 ### Rain
-![Rain scenario 1](screenshots/rain_1.jpg)
-![Rain scenario 1](screenshots/rain_2.jpg)
+<p float="left">
+  <img src="screenshots/rain_1.jpg" width="45%" />
+  <img src="screenshots/rain_2.jpg" width="45%" /> 
+</p>
 
 ### Wave
-![Wave scenario 1](screenshots/wave_1.jpg)
-![Wave scenario 2](screenshots/wave_2.jpg)
+<p float="left">
+  <img src="screenshots/wave_1.jpg" width="45%" />
+  <img src="screenshots/wave_2.jpg" width="45%" /> 
+</p>
 
 ## Building
 
